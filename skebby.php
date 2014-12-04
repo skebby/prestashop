@@ -44,8 +44,8 @@ class Skebby extends Module {
 		
 		parent::__construct ();
 		
-		$this->displayName = $this->l ( 'Skebby SMS Plugin' );
-		$this->description = $this->l ( 'With Skebby SMS Plugin for Prestashop you will be able to integrate all the Skebby features with no coding. This plugin requires to  have an account with skebby and have available credit.' );
+		$this->displayName = $this->l ( 'Skebby SMS' );
+		$this->description = $this->l ( 'With Skebby SMS module for Prestashop you will be able to integrate all the Skebby features with no coding. This module requires to  have an account with skebby and have available credit.' );
 		
 		$this->confirmUninstall = $this->l ( 'Are you sure you want to uninstall? You will not be able to send sms notifications.' );
 		

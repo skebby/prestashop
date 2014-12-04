@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 	<name>skebby</name>
-	<displayName><![CDATA[Skebby SMS Plugin]]></displayName>
+	<displayName><![CDATA[Skebby SMS]]></displayName>
 	<version><![CDATA[1.0.0]]></version>
-	<description><![CDATA[With Skebby SMS Plugin for Prestashop you will be able to integrate all the Skebby features with no coding. This plugin requires to  have an account with skebby and have available credit.]]></description>
+	<description><![CDATA[With Skebby SMS module for Prestashop you will be able to integrate all the Skebby features with no coding. This module requires to  have an account with skebby and have available credit.]]></description>
 	<author><![CDATA[Skebby Dev Team]]></author>
 	<tab><![CDATA[emailing]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall? You will not be able to send sms notifications.]]></confirmUninstall>
