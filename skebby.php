@@ -300,25 +300,14 @@ class Skebby extends Module {
 				),
 		);
 	
-	
-	
-		// Display Some Info
-		$fields_form[0]['form'] = array(
-				'legend' => array(
-						'title' => $this->l('Skebby'),
-						'image' => 'img/icons/skebby.png'
-				),
-		);
-	
-	
-	
+
 	
 			
 		// Configuration Form
-		$fields_form[1]['form'] = array(
+		$fields_form[0]['form'] = array(
 				'legend' => array(
 						'title' => $this->l('Settings'),
-						'image' => 'img/icons/skebby.png'
+						'image' => '/modules/skebby/logo.png'
 				),
 				'input' => array(
 						array(
@@ -412,7 +401,13 @@ class Skebby extends Module {
 		$helper->fields_value['SKEBBY_DEFAULT_NUMBER'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
 		$helper->fields_value['SKEBBY_DEFAULT_ALPHASENDER'] = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
 			
-		return $helper->generateForm($fields_form);
+		$theform = '';
+		
+		$theform .= $this->display(__FILE__, 'views/templates/admin/intro.tpl');
+		$theform .= $helper->generateForm($fields_form);
+		
+		return $theform;
+
 	}
 	
 	
