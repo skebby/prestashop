@@ -4,6 +4,9 @@
 		<button type="button" id="credit_btn" class="btn btn-default skt-testconnection">CHECK CREDIT</button>
 		<button type="button" id="test_btn" class="btn btn-default skt-testconnection">TEST ORDER SMS</button>
 	</div>
+	<br/>
+	<br/>
+	<div class="alert alert-warning">{l s='Sending a test SMS will be deducted from your SMS credits.' mod='skebby'}</div>
 </div>
 
 <br/>
@@ -33,9 +36,9 @@ window.Skebby.Client.checkCredit = function(token) {
 window.Skebby.Client.testOrderSMS = function(token) {
 	$.getJSON('/modules/skebby/testordermessage.php?token=' + token).then(function(data) {
 		if (data && data.status && data.status === 'success') {
-			alert('success');
+			alert({l s='SMS successfully sent.' mod='skebby' js=1});
 		} else {
-			alert('fail');
+			alert({l s='SMS send failed.' mod='skebby' js=1});
 		}
 	});
 };
