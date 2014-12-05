@@ -1,4 +1,4 @@
-Skebby module for PrestaShop
+Skebby PrestaShop module
 ---------------------------------------------------------------------
 
 Copyright (C) 2014 https://www.skebby.it 

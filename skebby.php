@@ -1,6 +1,6 @@
 <?php
 if (! defined ( '_PS_VERSION_' ))
-	exit ('');
+	exit ( '' );
 
 require_once (dirname ( __FILE__ ) . '/lib/Skebby/ApiClient.php');
 class Skebby extends Module {
@@ -69,6 +69,7 @@ class Skebby extends Module {
 		
 		// instance the Skebby Api Client
 		$this->apiClient = new SkebbyApiClient ();
+		$this->apiClient->setCredentials ( Configuration::get ( 'SKEBBY_USERNAME' ), Configuration::get ( 'SKEBBY_PASSWORD' ) );
 	}
 	
 	/**
@@ -83,7 +84,7 @@ class Skebby extends Module {
 		
 		$this->logMessage ( "Installing Skebby Module" );
 		
-		$success = (parent::install () && $this->registerHook ( 'payment' ) && $this->registerHook ( 'newOrder' ) && $this->registerHook ( 'actionOrderStatusPostUpdate' ) && $this->registerHook ( 'orderConfirmation' ));
+		$success = (parent::install () && $this->registerHook ( 'orderConfirmation' ));
 		
 		if ($success) {
 			
@@ -117,41 +118,6 @@ class Skebby extends Module {
 	}
 	
 	/**
-	 * Register the Module to the payment Hook
-	 *
-	 * @param unknown $params        	
-	 * @return boolean
-	 */
-	public function hookPayment($params) {
-		if (! $this->checkModuleStatus ())
-			return false;
-		
-		$this->logMessage ( "hookOrderConfirmation" );
-		$this->logMessage ( print_r ( $params, 1 ) );
-		
-		$data = array ();
-		$data ['from'] = Configuration::get ( 'SKEBBY_DEFAULT_NUMBER' );
-		$data ['text'] = $this->buildMessageBody ( $params );
-		$data ['to'] = Configuration::get ( 'SKEBBY_DEFAULT_NUMBER' );
-		
-		// Do Send Message
-		$this->sendSmsApi ( $msgbody );
-	}
-	public function hookNewOrder($params) {
-		return $this->hookActionOrderStatusPostUpdate ( $params );
-	}
-	public function hookActionOrderStatusPostUpdate($params) {
-		if (! $this->checkModuleStatus ())
-			return false;
-		
-		$this->logMessage ( "hookActionOrderStatusPostUpdate" );
-		$this->logMessage ( print_r ( $params, 1 ) );
-		
-		// $params['newOrderStatus'] // after status changed
-		// $params['orderStatus'] // after order is placed
-	}
-	
-	/**
 	 * When a user places an order, the tracking code integrates in the order confirmation page.
 	 *
 	 * @param unknown $params        	
@@ -166,63 +132,72 @@ class Skebby extends Module {
 		$this->logMessage ( print_r ( $params, 1 ) );
 		
 		$data = array ();
-		$data ['text'] = $this->buildMessageBody ( $params );
+		$data ['text'] = $this->buildMessageBody ( $params , 'SKEBBY_ORDER_TEMPLATE');
+		$data ['from'] = Configuration::get ( 'SKEBBY_DEFAULT_NUMBER' );
+		$data ['to'] = Configuration::get ( 'SKEBBY_ORDER_RECIPIENT' );
+		$data ['quality'] = Configuration::get ( 'SKEBBY_DEFAULT_QUALITY' );
 		
 		// Do Send Message
-		$this->sendSmsApi ( $data );
+		return $this->sendSmsApi ( $data );
 	}
-	
 	
 	/**
 	 * Return the user's credit.
+	 *
 	 * @return number
 	 */
-	public function getCredit(){
-		
-		return $this->apiClient->getGatewayCredit(Configuration::get ( 'SKEBBY_USERNAME' ), Configuration::get ( 'SKEBBY_PASSWORD' ));
+	public function getCredit() {
+		return $this->apiClient->getGatewayCredit ();
 	}
-	
-
 	
 	// ********************************************************************************************************
 	// PRIVATES
 	// ********************************************************************************************************
-	private function buildMessageBody($params) {
-		$this->logMessage ( "buildMessageBody" );
-		$this->logMessage ( print_r ( $params, 1 ) );
-		return 'Test Message';
+	private function buildMessageBody($params, $template_id) {
+		
+		$template = Configuration::get ( $template_id );
+		$message = $template;
+
+		$message = str_replace("%currency%", $params ['currency'], $message);
+		$message = str_replace("%total_to_pay%", $params ['total_to_pay'], $message);
+
+		
+		return $message;
 	}
 	
 	/**
 	 * Send out a SMS
 	 *
-	 * @param unknown $params        	
+	 * @param array $data        	
 	 */
-	private function sendSmsApi($params) {
-		$this->logMessage ( "sendSmsApi" );
-		$this->logMessage ( print_r ( $params, 1 ) );
+	private function sendSmsApi(array $data) {
 		
-		$data = array ();
-		$data ['from'] = Configuration::get ( 'SKEBBY_DEFAULT_NUMBER' );
-		$data ['text'] = 'Missing Message Body';
-		$data ['to'] = Configuration::get ( 'SKEBBY_DEFAULT_NUMBER' );
-		$data ['quality'] = Configuration::get ( 'SKEBBY_DEFAULT_QUALITY' );
-		
-		// Merge params
-		$data = array_merge_recursive ( $data, $params );
-		
+		$this->logMessage ( "*********************** sendSmsApi ***********************" );
 		$this->logMessage ( print_r ( $data, 1 ) );
 		
-		$this->apiClient->sendSMS ( $data );
+		$recipients = $data ['to'];
+		$text = $data ['text'];
+		$sms_type = $data ['quality'];
+		$sender_number = $data ['from'];
+		
+		$result = $this->apiClient->sendSMS ( $recipients, $text, $text, $sender_number );
+		
+		$this->logMessage ( $result );
+		
+		return $result;
 	}
 	
-
-	
 	/**
-	 * 
+	 *
 	 * @return unknown
 	 */
 	public function displayForm() {
+		
+		$data = array ();
+		$data ['token'] = Tools::encrypt ( Configuration::get ( 'PS_SHOP_NAME' ) );
+		$this->context->smarty->assign ( $data );
+		
+		
 		// Get default language
 		$default_lang = ( int ) Configuration::get ( 'PS_LANG_DEFAULT' );
 		
@@ -257,7 +232,7 @@ class Skebby extends Module {
 								'required' => true 
 						),
 						array (
-								'type' => 'password',
+								'type' => 'text',
 								'label' => $this->l ( 'Skebby Account Password' ),
 								'desc' => $this->l ( 'The password to access Skebby services' ),
 								'name' => 'SKEBBY_PASSWORD',
@@ -294,6 +269,31 @@ class Skebby extends Module {
 								'name' => 'SKEBBY_DEFAULT_ALPHASENDER',
 								'size' => 20,
 								'required' => true 
+						),
+						array (
+								'type' => 'text',
+								'label' => $this->l ( 'Order Recipient' ),
+								'desc' => $this->l ( 'Recipient receiving SMS Order Notifications' ),
+								'hint' => $this->l ( 'Please refer to website docs for AGCOM specifications' ),
+								'name' => 'SKEBBY_ORDER_RECIPIENT',
+								'size' => 20,
+								'required' => true 
+						),
+						array (
+								'type' => 'textarea',
+								'label' => $this->l ( 'Order message template' ),
+								'desc' => $this->l ( 'Type the message template for orders. you can use the variables %currency% and %total_to_pay% that will be replaced in the message.' ),
+								'name' => 'SKEBBY_ORDER_TEMPLATE',
+								'cols' => 40,
+								'rows' => 5,
+								'required' => true
+						),
+						array (
+								'type' => 'free',
+								'label' => $this->l ( 'Check the Credit' ),
+								'desc' => $this->display ( __FILE__, 'views/templates/admin/scripts.tpl' ),
+								'name' => 'FREE_TEXT',
+								'required' => false
 						)
 				),
 				'submit' => array (
@@ -301,6 +301,8 @@ class Skebby extends Module {
 						'class' => 'button' 
 				) 
 		);
+
+		
 		
 		$helper = new HelperForm ();
 		
@@ -336,24 +338,25 @@ class Skebby extends Module {
 		$helper->fields_value ['SKEBBY_DEFAULT_QUALITY'] = Configuration::get ( 'SKEBBY_DEFAULT_QUALITY' );
 		$helper->fields_value ['SKEBBY_DEFAULT_NUMBER'] = Configuration::get ( 'SKEBBY_DEFAULT_NUMBER' );
 		$helper->fields_value ['SKEBBY_DEFAULT_ALPHASENDER'] = Configuration::get ( 'SKEBBY_DEFAULT_ALPHASENDER' );
+		$helper->fields_value ['SKEBBY_ORDER_RECIPIENT'] = Configuration::get ( 'SKEBBY_ORDER_RECIPIENT' );
+		$helper->fields_value ['SKEBBY_ORDER_TEMPLATE'] = Configuration::get ( 'SKEBBY_ORDER_TEMPLATE' );
+		$helper->fields_value ['FREE_TEXT'] = Configuration::get ( 'FREE_TEXT' );
 		
 		$theform = '';
 		
-		$data = array();
-		$data['token'] = Tools::encrypt(Configuration::get('PS_SHOP_NAME'));
+	
 		
-		$this->context->smarty->assign($data);
+		$this->context->smarty->assign ( $data );
 		
 		$theform .= $this->display ( __FILE__, 'views/templates/admin/intro.tpl' );
 		$theform .= $helper->generateForm ( $fields_form );
-		$this->context->smarty->assign($data);
-		$theform .= $this->display ( __FILE__, 'views/templates/admin/scripts.tpl' );
+// 		$data = array ();
+// 		$data ['token'] = Tools::encrypt ( Configuration::get ( 'PS_SHOP_NAME' ) );
+// 		$this->context->smarty->assign ( $data );
+// 		$theform .= $this->display ( __FILE__, 'views/templates/admin/scripts.tpl' );
 		
 		return $theform;
 	}
-	
-	
-	
 	
 	/**
 	 * When submitted the config form!
@@ -385,9 +388,13 @@ class Skebby extends Module {
 			// Mobile number field
 			
 			$skebby_mobile_number = strval ( Tools::getValue ( 'SKEBBY_DEFAULT_NUMBER' ) );
-			if (! $skebby_mobile_number || empty ( $skebby_mobile_number ) || ! Validate::isGenericName ( $skebby_mobile_number ))
-				$output .= $this->displayError ( $this->l ( 'Invalid number' ) );
+			$skebby_mobile_number = $this->normalizeNumber($skebby_mobile_number);
+
+			if (! $skebby_mobile_number || empty ( $skebby_mobile_number ) || ! Validate::isGenericName ( $skebby_mobile_number ) || !$this->isValidMobileNumber($skebby_mobile_number))
+				$output .= $this->displayError ( $this->l ( 'Invalid Sender Mobile Number' ) );
 			else {
+				
+				
 				Configuration::updateValue ( 'SKEBBY_DEFAULT_NUMBER', $skebby_mobile_number );
 				$output .= $this->displayConfirmation ( $this->l ( 'Sender Number updated' ) );
 			}
@@ -401,6 +408,29 @@ class Skebby extends Module {
 				Configuration::updateValue ( 'SKEBBY_DEFAULT_QUALITY', $skebby_default_quality );
 				$output .= $this->displayConfirmation ( $this->l ( 'SMS Quality updated' ) );
 			}
+
+			
+			// Order Template
+			
+			$skebby_order_template = strval ( Tools::getValue ( 'SKEBBY_ORDER_TEMPLATE' ) );
+			if (! $skebby_order_template || empty ( $skebby_order_template ) || ! Validate::isGenericName ( $skebby_order_template ))
+				$output .= $this->displayError ( $this->l ( 'Invalid order template' ) );
+			else {
+				Configuration::updateValue ( 'SKEBBY_ORDER_TEMPLATE', $skebby_order_template );
+				$output .= $this->displayConfirmation ( $this->l ( 'Order Template updated' ) );
+			}
+
+			// Order Recipient
+			
+			$skebby_order_recipient = strval ( Tools::getValue ( 'SKEBBY_ORDER_RECIPIENT' ) );
+			$skebby_order_recipient = $this->normalizeNumber($skebby_order_recipient);
+			
+			if (! $skebby_order_recipient || empty ( $skebby_order_recipient ) || ! Validate::isGenericName ( $skebby_order_recipient ) || !$this->isValidMobileNumber($skebby_order_recipient))
+				$output .= $this->displayError ( $this->l ( 'Invalid Order Recipient' ) );
+			else {
+				Configuration::updateValue ( 'SKEBBY_ORDER_RECIPIENT', $skebby_order_recipient );
+				$output .= $this->displayConfirmation ( $this->l ( 'Order Recipient Updated' ) );
+			}
 			
 			$this->logMessage ( 'Updated config Values' );
 			
@@ -410,10 +440,7 @@ class Skebby extends Module {
 		return $output . $this->displayForm ();
 	}
 	
-	
-	
 	/**
-	 * 
 	 */
 	private function dumpConfig() {
 		$this->logMessage ( "SKEBBY_PASSWORD: " . Tools::getValue ( 'SKEBBY_PASSWORD' ) );
@@ -421,17 +448,29 @@ class Skebby extends Module {
 		$this->logMessage ( "SKEBBY_DEFAULT_QUALITY: " . Tools::getValue ( 'SKEBBY_DEFAULT_QUALITY' ) );
 		$this->logMessage ( "SKEBBY_DEFAULT_NUMBER: " . Tools::getValue ( 'SKEBBY_DEFAULT_NUMBER' ) );
 		$this->logMessage ( "SKEBBY_DEFAULT_ALPHASENDER: " . Tools::getValue ( 'SKEBBY_DEFAULT_ALPHASENDER' ) );
+		$this->logMessage ( "SKEBBY_ORDER_RECIPIENT: " . Tools::getValue ( 'SKEBBY_ORDER_RECIPIENT' ) );
+		$this->logMessage ( "SKEBBY_ORDER_TEMPLATE: " . Tools::getValue ( 'SKEBBY_ORDER_TEMPLATE' ) );
 	}
 	
-	
 	/**
-	 * 
-	 * @param unknown $mobile_number
-	 * @return boolean|number
+	 *
+	 * @param unknown $mobile_number        	
+	 * @return boolean number
 	 */
-	private function isValidNumber($mobile_number) {
-		return true;
-		return preg_match ( '^[a-zA-Z]{2}[0-9]{8,10}$', $mobile_number );
+	private function isValidMobileNumber($mobile_number) {
+		return preg_match ( "/^[0-9]{8,12}$/", $mobile_number );
+	}
+
+	/**
+	 * Normalize a mobile number string
+	 * 
+	 * @param unknown $mobile_number        	
+	 * @return boolean number
+	 */
+	private function normalizeNumber($mobile_number) {
+		$mobile_number = str_replace ( '+', '', $mobile_number );
+		$mobile_number = preg_replace ( '/\s+/', '', $mobile_number );
+		return $mobile_number;
 	}
 	
 	/**

@@ -1,15 +1,6 @@
 <?php
 
 
-define("NET_ERROR", "Network+error,+unable+to+send+the+message");
-define("SENDER_ERROR", "You+can+specify+only+one+type+of+sender,+numeric+or+alphanumeric");
-
-define ("SMS_TYPE_CLASSIC", "classic");
-define ("SMS_TYPE_CLASSIC_PLUS", "classic_plus");
-define ("SMS_TYPE_BASIC", "basic");
-define ("SMS_TYPE_TEST_CLASSIC", "test_classic");
-define ("SMS_TYPE_TEST_CLASSIC_PLUS", "test_classic_plus");
-define ("SMS_TYPE_TEST_BASIC", "test_basic");
 
 
 /**
@@ -21,24 +12,52 @@ define ("SMS_TYPE_TEST_BASIC", "test_basic");
 class SkebbyApiClient {
 	
 	
+	const GATEWAY_URL = 'http://gateway.skebby.it/api/send/smseasy/advanced/http.php';
 	
+	
+	const SMS_TYPE_CLASSIC = 'classic';
+	const SMS_TYPE_CLASSIC_PLUS = 'classic_plus';
+	const SMS_TYPE_BASIC = 'basic';
+	
+	
+	const SMS_TYPE_TEST_CLASSIC = 'test_classic';
+	const SMS_TYPE_TEST_CLASSIC_PLUS = 'test_classic_plus';
+	const SMS_TYPE_TEST_BASIC = 'test_basic';
+
+	
+	const NET_ERROR = "Network+error,+unable+to+send+the+message";
+	const SENDER_ERROR = "You+can+specify+only+one+type+of+sender,+numeric+or+alphanumeric";
+
+	
+	
+	const METHOD_GET_CREDIT = "get_credit";
+	
+
+	
+	private $username;
+
+	
+	private $password;
+	
+	
+
 	/**
 	 * 
-	 * @param unknown $recipients
-	 * @param unknown $text
-	 * @param unknown $sms_type
+	 * @param string $username
+	 * @param string $password
 	 */
-	public function sendSMS($recipients, $text, $sms_type){
-		
+	public function setCredentials($username, $password){
+		$this->username = $username;
+		$this->password = $password;
 	}
 	
 	
+
+	
 	
 	
 	/**
-	 *
-	 * @param unknown $username
-	 * @param unknown $password
+	 * 
 	 * @param unknown $recipients
 	 * @param unknown $text
 	 * @param string $sms_type
@@ -49,8 +68,8 @@ class SkebbyApiClient {
 	 * @param string $optional_headers
 	 * @return unknown
 	 */
-	private function _sendSMS($username, $password, $recipients, $text, $sms_type = SMS_TYPE_CLASSIC, $sender_number = '', $sender_string = '', $user_reference = '', $charset = '', $optional_headers = null) {
-		$url = 'http://gateway.skebby.it/api/send/smseasy/advanced/http.php';
+	public function sendSMS($recipients, $text, $sms_type = '', $sender_number = '', $sender_string = '', $user_reference = '', $charset = '', $optional_headers = null) {
+		
 	
 		if (! is_array ( $recipients )) {
 			$recipients = array (
@@ -59,31 +78,32 @@ class SkebbyApiClient {
 		}
 	
 		switch ($sms_type) {
-			case SMS_TYPE_CLASSIC :
+			case self::SMS_TYPE_CLASSIC :
+			case '' :
 			default :
 				$method = 'send_sms_classic';
 				break;
-			case SMS_TYPE_CLASSIC_PLUS :
+			case self::SMS_TYPE_CLASSIC_PLUS :
 				$method = 'send_sms_classic_report';
 				break;
-			case SMS_TYPE_BASIC :
+			case self::SMS_TYPE_BASIC :
 				$method = 'send_sms_basic';
 				break;
-			case SMS_TYPE_TEST_CLASSIC :
+			case self::SMS_TYPE_TEST_CLASSIC :
 				$method = 'test_send_sms_classic';
 				break;
-			case SMS_TYPE_TEST_CLASSIC_PLUS :
+			case self::SMS_TYPE_TEST_CLASSIC_PLUS :
 				$method = 'test_send_sms_classic_report';
 				break;
-			case SMS_TYPE_TEST_BASIC :
+			case self::SMS_TYPE_TEST_BASIC :
 				$method = 'test_send_sms_basic';
 				break;
 		}
 	
-		$parameters = 'method=' . urlencode ( $method ) . '&' . 'username=' . urlencode ( $username ) . '&' . 'password=' . urlencode ( $password ) . '&' . 'text=' . urlencode ( $text ) . '&' . 'recipients[]=' . implode ( '&recipients[]=', $recipients );
+		$parameters = 'method=' . urlencode ( $method ) . '&' . 'username=' . urlencode ( $this->username ) . '&' . 'password=' . urlencode ( $this->password ) . '&' . 'text=' . urlencode ( $text ) . '&' . 'recipients[]=' . implode ( '&recipients[]=', $recipients );
 	
 		if ($sender_number != '' && $sender_string != '') {
-			parse_str ( 'status=failed&message=' . SENDER_ERROR, $result );
+			parse_str ( 'status=failed&message=' . self::SENDER_ERROR, $result );
 			return $result;
 		}
 		$parameters .= $sender_number != '' ? '&sender_number=' . urlencode ( $sender_number ) : '';
@@ -92,19 +112,48 @@ class SkebbyApiClient {
 		$parameters .= $user_reference != '' ? '&user_reference=' . urlencode ( $user_reference ) : '';
 	
 		switch ($charset) {
+			case '' :
 			case 'UTF-8' :
 				$parameters .= '&charset=' . urlencode ( 'UTF-8' );
 				break;
-			case '' :
 			case 'ISO-8859-1' :
 			default :
 				break;
 		}
 	
-		parse_str ( $this->doPostRequest ( $url, $parameters, $optional_headers ), $result );
+		parse_str ( $this->doPostRequest ( self::GATEWAY_URL, $parameters, $optional_headers ), $result );
 	
 		return $result;
 	}
+	
+	
+
+
+	/**
+	 *
+	 * @param unknown $username
+	 * @param unknown $password
+	 * @param string $charset
+	 * @return unknown
+	 */
+	public function getGatewayCredit($charset = '') {
+	
+	
+		$parameters = 'method=' . urlencode ( self::METHOD_GET_CREDIT ) . '&' . 'username=' . urlencode ( $this->username ) . '&' . 'password=' . urlencode ( $this->password );
+	
+		switch ($charset) {
+			case 'UTF-8' :
+				$parameters .= '&charset=' . urlencode ( 'UTF-8' );
+				break;
+			default :
+		}
+	
+		parse_str ( $this->doPostRequest ( self::GATEWAY_URL, $parameters ), $result );
+		return $result;
+	}
+	
+	
+	
 	
 	/**
 	 * 
@@ -127,11 +176,11 @@ class SkebbyApiClient {
 			$ctx = stream_context_create ( $params );
 			$fp = @fopen ( $url, 'rb', false, $ctx );
 			if (! $fp) {
-				return 'status=failed&message=' . NET_ERROR;
+				return 'status=failed&message=' . self::NET_ERROR;
 			}
 			$response = @stream_get_contents ( $fp );
 			if ($response === false) {
-				return 'status=failed&message=' . NET_ERROR;
+				return 'status=failed&message=' . self::NET_ERROR;
 			}
 			return $response;
 		} else {
@@ -150,7 +199,7 @@ class SkebbyApiClient {
 			$response = curl_exec ( $ch );
 			curl_close ( $ch );
 			if (! $response) {
-				return 'status=failed&message=' . NET_ERROR;
+				return 'status=failed&message=' . self::NET_ERROR;
 			}
 			return $response;
 		}
@@ -161,29 +210,5 @@ class SkebbyApiClient {
 
 	
 	
-	
-	
-	/**
-	 * 
-	 * @param unknown $username
-	 * @param unknown $password
-	 * @param string $charset
-	 * @return unknown
-	 */
-	public function getGatewayCredit($username, $password, $charset = '') {
-		$url = "http://gateway.skebby.it/api/send/smseasy/advanced/http.php";
-		$method = "get_credit";
-		
-		$parameters = 'method=' . urlencode ( $method ) . '&' . 'username=' . urlencode ( $username ) . '&' . 'password=' . urlencode ( $password );
-		
-		switch ($charset) {
-			case 'UTF-8' :
-				$parameters .= '&charset=' . urlencode ( 'UTF-8' );
-				break;
-			default :
-		}
-		
-		parse_str ( $this->doPostRequest ( $url, $parameters ), $result );
-		return $result;
-	}
+
 }
