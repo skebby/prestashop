@@ -104,7 +104,7 @@ class Skebby extends Module
         
         $this->logMessage("Installing Skebby Module");
         
-        $success = (parent::install() && $this->registerHook('orderConfirmation'));
+        $success = (parent::install() && $this->registerHook('orderConfirmation') && $this->registerHook('orderConfirmation'));
         
         if ($success) {
             
@@ -120,6 +120,16 @@ class Skebby extends Module
     }
 
     /**
+     * Delete custom configuration keys.
+     *
+     * @return boolean
+     */
+    private function removeConfigKeys()
+    {
+        return (Configuration::deleteByName('SKEBBY_USERNAME') && Configuration::deleteByName('SKEBBY_PASSWORD') && Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY') && Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER') && Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER'));
+    }
+
+    /**
      *
      * @return boolean
      */
@@ -127,7 +137,7 @@ class Skebby extends Module
     {
         $this->logMessage("Uninstalling Skebby Module");
         
-        $success = (parent::uninstall() && Configuration::deleteByName('SKEBBY_USERNAME') && Configuration::deleteByName('SKEBBY_PASSWORD') && Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY') && Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER') && Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER'));
+        $success = (parent::uninstall() && $this->removeConfigKeys());
         
         if ($success) {
             $this->logMessage("Skebby Module Uninstalled Successfully");
@@ -136,6 +146,120 @@ class Skebby extends Module
         $this->dumpConfig();
         
         return $success;
+    }
+
+    /**
+     * Returns true if the user has opted in for shipping notification.
+     *
+     * @return boolean
+     */
+    private function shouldNotifyUponShipment()
+    {
+        return Configuration::get('Sendin_Api_Sms_shipment_Status') == 1 && Configuration::get('Sendin_Sender_Shipment_Message') != '';
+    }
+
+    /**
+     * Hook the event of shipping an order.
+     *
+     * @param unknown $params            
+     * @return boolean
+     */
+    public function hookUpdateOrderStatus($params)
+    {
+        $id_order_state = Tools::getValue('id_order_state');
+        
+        // if the order is not being shipped. Exit.
+        if ($id_order_state != 4) {
+            return false;
+        }
+        
+        // If the user didn't opted for notifications. Exit.
+        if (! $this->shouldNotifyUponShipment()) {
+            return false;
+        }
+        
+        // Get some variables about the order.
+        
+        $order = new Order(Tools::getValue('id_order'));
+        $address = new Address((int) $order->id_address_delivery);
+        $customer_civility_result = Db::getInstance()->ExecuteS('SELECT id_gender,firstname,lastname FROM ' . _DB_PREFIX_ . 'customer WHERE `id_customer` = ' . (int) $order->id_customer);
+        $firstname = (isset($address->firstname)) ? $address->firstname : '';
+        $lastname = (isset($address->lastname)) ? $address->lastname : '';
+        
+        // Try to gess the civilty about the user.
+        
+        $civility_value = '';
+        if (Tools::strtolower($firstname) === Tools::strtolower($customer_civility_result[0]['firstname']) && Tools::strtolower($lastname) === Tools::strtolower($customer_civility_result[0]['lastname'])) {
+            $civility_value = (isset($customer_civility_result['0']['id_gender'])) ? $customer_civility_result['0']['id_gender'] : '';
+        }
+        
+        // Guess the civilty for given user. Defaults to no civilty.
+        
+        switch ($civility_value) {
+            case 1:
+                $civility = 'Mr.';
+                break;
+            case 2:
+                $civility = 'Ms.';
+                break;
+            case 3:
+                $civility = 'Miss.';
+                break;
+            default:
+                $civility = '';
+                break;
+        }
+        
+        // Fetch the mobile phone number from the user profile.
+        // if not specified. Exit.
+        
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
+				SELECT `call_prefix`
+				FROM `' . _DB_PREFIX_ . 'country`
+				WHERE `id_country` = ' . (int) $address->id_country);
+        
+        // If for some reason the mobile number not specified. Exit.
+        
+        if (! isset($address->phone_mobile) || ! empty($address->phone_mobile)) {
+            return false;
+        }
+        
+        // get order date.
+        // try to format the date according to language context
+        
+        $order_date = (isset($order->date_upd)) ? $order->date_upd : 0;
+        
+        if ($this->context->language->id == 1) {
+            $ord_date = date('m/d/Y', strtotime($order_date));
+        } else {
+            $ord_date = date('d/m/Y', strtotime($order_date));
+        }
+        
+        // Create the SMS Message Body
+        
+        $msgbody = Configuration::get('Sendin_Sender_Shipment_Message');
+        
+        // the order amount and currency.
+        $total_pay = (isset($order->total_paid)) ? $order->total_paid : 0;
+        $total_pay = $total_pay . '' . $this->context->currency->iso_code;
+        
+        // prepare variables for message template replacement. The user should have specified a template for the message.
+        
+        $civility_data = str_replace('{civility}', $civility, $msgbody);
+        $fname = str_replace('{first_name}', $firstname, $civility_data);
+        $lname = str_replace('{last_name}', $lastname . "\r\n", $fname);
+        $product_price = str_replace('{order_price}', $total_pay, $lname);
+        $order_date = str_replace('{order_date}', $ord_date . "\r\n", $product_price);
+        $msgbody = str_replace('{order_reference}', $ref_num, $order_date);
+        
+        // TODO: we should perparse and notify the user if the message excedes a single message.
+        
+        $arr = array();
+        $arr['to'] = $this->checkMobileNumber($address->phone_mobile, $result['call_prefix']);
+        $arr['from'] = Configuration::get('Sendin_Sender_Shipment');
+        $arr['text'] = $msgbody;
+        
+        $this->sendSmsApi($arr);
     }
 
     /**
