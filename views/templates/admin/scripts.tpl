@@ -13,7 +13,7 @@
 <div id="credit-response" class="alert alert-dismissible">
 </div>
 
-<script type="text/javascript">
+<script>
 
 window.Skebby = window.Skebby || {};
 window.Skebby.Client = window.Skebby.Client || {};
@@ -36,17 +36,13 @@ window.Skebby.Client.checkCredit = function(token) {
 window.Skebby.Client.testOrderSMS = function(token) {
 	$.getJSON('/modules/skebby/testordermessage.php?token=' + token).then(function(data) {
 		if (data && data.status && data.status === 'success') {
-			alert({l s='SMS successfully sent.' mod='skebby' js=1});
+			alert("{l s='SMS successfully sent.' mod='skebby' js=1}");
 		} else {
-			alert({l s='SMS send failed.' mod='skebby' js=1});
+			alert("{l s='SMS send failed.' mod='skebby' js=1}");
 		}
 	});
 };
 
-
-</script>
-
-<script>
 $(document).ready(function(){
 	$("#credit_btn").on('click', function(){
 		window.Skebby.Client.checkCredit('{$token}');
