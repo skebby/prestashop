@@ -19,7 +19,7 @@ class Skebby extends Module
      *
      * @var SkebbyApiClient
      */
-    private $apiClient;
+    private $api_client;
 
     /**
      * Constructor
@@ -87,8 +87,8 @@ class Skebby extends Module
         $this->initLogger();
         
         // instance the Skebby Api Client
-        $this->apiClient = new SkebbyApiClient();
-        $this->apiClient->setCredentials(Configuration::get('SKEBBY_USERNAME'), Configuration::get('SKEBBY_PASSWORD'));
+        $this->api_client = new SkebbyApiClient();
+        $this->api_client->setCredentials(Configuration::get('SKEBBY_USERNAME'), Configuration::get('SKEBBY_PASSWORD'));
     }
 
     /**
@@ -294,7 +294,7 @@ class Skebby extends Module
      */
     public function getCredit()
     {
-        return $this->apiClient->getGatewayCredit();
+        return $this->api_client->getGatewayCredit();
     }
     
     // ********************************************************************************************************
@@ -326,7 +326,7 @@ class Skebby extends Module
         $sms_type = $data['quality'];
         $sender_number = $data['from'];
         
-        $result = $this->apiClient->sendSMS($recipients, $text, $text, $sender_number);
+        $result = $this->api_client->sendSMS($recipients, $text, $text, $sender_number);
         
         $this->logMessage($result);
         
