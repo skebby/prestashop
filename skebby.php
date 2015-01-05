@@ -104,7 +104,7 @@ class Skebby extends Module
         
         $this->logMessage("Installing Skebby Module");
         
-        $success = (parent::install() && $this->registerHook('orderConfirmation') && $this->registerHook('orderConfirmation'));
+        $success = (parent::install() && $this->hookInstall());
         
         if ($success) {
             
@@ -126,7 +126,27 @@ class Skebby extends Module
      */
     private function removeConfigKeys()
     {
-        return (Configuration::deleteByName('SKEBBY_USERNAME') && Configuration::deleteByName('SKEBBY_PASSWORD') && Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY') && Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER') && Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER'));
+        return (Configuration::deleteByName('SKEBBY_USERNAME') && Configuration::deleteByName('SKEBBY_PASSWORD') && Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY') && Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER') && Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER') && Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
+    }
+
+    /**
+     * Uninstall of hooks
+     *
+     * @return boolean
+     */
+    private function hookUninstall()
+    {
+        return ($this->unregisterHook('orderConfirmation') && $this->unregisterHook('updateOrderStatus'));
+    }
+
+    /**
+     * Installation of hooks
+     *
+     * @return boolean
+     */
+    private function hookInstall()
+    {
+        return ($this->registerHook('orderConfirmation') && $this->registerHook('updateOrderStatus'));
     }
 
     /**
@@ -137,7 +157,7 @@ class Skebby extends Module
     {
         $this->logMessage("Uninstalling Skebby Module");
         
-        $success = (parent::uninstall() && $this->removeConfigKeys());
+        $success = (parent::uninstall() && $this->removeConfigKeys() && $this->hookUninstall());
         
         if ($success) {
             $this->logMessage("Skebby Module Uninstalled Successfully");
@@ -155,7 +175,7 @@ class Skebby extends Module
      */
     private function shouldNotifyUponShipment()
     {
-        return Configuration::get('Sendin_Api_Sms_shipment_Status') == 1 && Configuration::get('Sendin_Sender_Shipment_Message') != '';
+        return Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE') == 1 && Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE') != '';
     }
 
     /**
@@ -166,17 +186,23 @@ class Skebby extends Module
      */
     public function hookUpdateOrderStatus($params)
     {
+        $this->logMessage("Enter hookUpdateOrderStatus");
+        
         $id_order_state = Tools::getValue('id_order_state');
         
         // if the order is not being shipped. Exit.
         if ($id_order_state != 4) {
+            $this->logMessage("Order state do not match state 4. state is $id_order_state");
             return false;
         }
         
         // If the user didn't opted for notifications. Exit.
         if (! $this->shouldNotifyUponShipment()) {
+            $this->logMessage("Used did not opted in for shipment notification");
             return false;
         }
+        
+        $this->logMessage("Valid hookUpdateOrderStatus");
         
         // Get some variables about the order.
         
@@ -210,17 +236,18 @@ class Skebby extends Module
                 break;
         }
         
-        // Fetch the mobile phone number from the user profile.
+        // Fetch the international prefix.
         // if not specified. Exit.
         
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
+        $call_prefix_query = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
 				SELECT `call_prefix`
 				FROM `' . _DB_PREFIX_ . 'country`
 				WHERE `id_country` = ' . (int) $address->id_country);
         
         // If for some reason the mobile number not specified. Exit.
         
-        if (! isset($address->phone_mobile) || ! empty($address->phone_mobile)) {
+        if (! isset($address->phone_mobile) || empty($address->phone_mobile)) {
+            $this->logMessage("Invalid mobile");
             return false;
         }
         
@@ -237,7 +264,7 @@ class Skebby extends Module
         
         // Create the SMS Message Body
         
-        $msgbody = Configuration::get('Sendin_Sender_Shipment_Message');
+        $msgbody = Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
         
         // the order amount and currency.
         $total_pay = (isset($order->total_paid)) ? $order->total_paid : 0;
@@ -252,15 +279,61 @@ class Skebby extends Module
         $order_date = str_replace('{order_date}', $ord_date . "\r\n", $product_price);
         $msgbody = str_replace('{order_reference}', $ref_num, $order_date);
         
+        $this->logMessage("The message:");
+        $this->logMessage($msgbody);
+        
         // TODO: we should perparse and notify the user if the message excedes a single message.
         
         $arr = array();
-        $arr['to'] = $this->checkMobileNumber($address->phone_mobile, $result['call_prefix']);
-        $arr['from'] = Configuration::get('Sendin_Sender_Shipment');
-        $arr['text'] = $msgbody;
+        $data['text'] = $msgbody;
+        $data['from'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
+        $data['to'] = $this->checkMobileNumber($address->phone_mobile, $call_prefix_query['call_prefix']);
+        $data['quality'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
         
-        $this->sendSmsApi($arr);
+        $this->sendSmsApi($data);
     }
+    
+    
+    
+    /**
+     * 
+     * @param unknown $mobile_number
+     * @param unknown $prefix
+     * @return unknown
+     */
+    private function checkMobileNumber($mobile_number, $prefix){
+        $this->logMessage("checkMobileNumber: $mobile_number / $prefix ");
+        
+        $mobile_number = trim($mobile_number);
+        
+        // replace double zero with plus
+        if($this->startsWith($mobile_number, '00')){
+            $mobile_number =  str_replace('00', '', $mobile_number);
+            return $mobile_number;
+        }
+
+        if($this->startsWith($mobile_number, '+')){
+            $mobile_number =  str_replace('+', '', $mobile_number);
+           return $mobile_number;
+        }
+        
+        return $prefix . $mobile_number;
+        
+    }
+    
+    
+    /**
+     * 
+     * @param unknown $haystack
+     * @param unknown $needle
+     * @return boolean
+     */
+    private function startsWith($haystack, $needle) {
+    	// search backwards starting from haystack length characters from the end
+    	return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+    }
+    
+    
 
     /**
      * When a user places an order, the tracking code integrates in the order confirmation page.
@@ -434,6 +507,33 @@ class Skebby extends Module
                     'required' => true
                 ),
                 array(
+                    'type' => 'checkbox',
+                    'label' => $this->l('Shipment status notification enabled?'),
+                    'desc' => $this->l('Check this option in order to send automatically a message to your customer when an order is shipped. The meaasge will be sent if customer mobile phone and country are specified.'),
+                    'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION',
+                    'required' => false,
+                    'values' => array(
+                        'query' => array(
+                            array(
+                                'id' => 'ACTIVE',
+                                'name' => $this->l('Enabled'),
+                                'val' => '1'
+                            )
+                        ),
+                        'id' => 'id',
+                        'name' => 'name'
+                    )
+                ),
+                array(
+                    'type' => 'textarea',
+                    'label' => $this->l('Shipment status template'),
+                    'desc' => $this->l('Type the message a customer receive when his order has been shipped. you can use the variables %currency% and %total_to_pay% that will be replaced in the message.'),
+                    'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE',
+                    'cols' => 40,
+                    'rows' => 5,
+                    'required' => false
+                ),
+                array(
                     'type' => 'free',
                     'label' => $this->l('Check the Credit'),
                     'desc' => $this->display(__FILE__, 'views/templates/admin/scripts.tpl'),
@@ -483,6 +583,8 @@ class Skebby extends Module
         $helper->fields_value['SKEBBY_DEFAULT_ALPHASENDER'] = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
         $helper->fields_value['SKEBBY_ORDER_RECIPIENT'] = Configuration::get('SKEBBY_ORDER_RECIPIENT');
         $helper->fields_value['SKEBBY_ORDER_TEMPLATE'] = Configuration::get('SKEBBY_ORDER_TEMPLATE');
+        $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'] = Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
+        $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'] = (strval(Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE')) == '1' );
         $helper->fields_value['FREE_TEXT'] = Configuration::get('FREE_TEXT');
         
         $theform = '';
@@ -572,6 +674,26 @@ class Skebby extends Module
                 $output .= $this->displayConfirmation($this->l('Order Recipient Updated'));
             }
             
+            // Shipment active
+            // Update the checkbox
+            
+            $skebby_shipment_active = Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE');
+            Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION', $skebby_shipment_active);
+            Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE', $skebby_shipment_active);
+            
+            $this->logMessage('shipment active');
+            $this->logMessage($skebby_shipment_active);
+
+            // Shipment Template
+            
+            $skebby_shipment_template = strval(Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
+            if (! $skebby_shipment_template || empty($skebby_shipment_template) || ! Validate::isGenericName($skebby_shipment_template))
+                $output .= $this->displayError($this->l('Invalid order template'));
+            else {
+                Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $skebby_shipment_template);
+                $output .= $this->displayConfirmation($this->l('Shipment Template updated'));
+            }
+            
             $this->logMessage('Updated config Values');
             
             $this->dumpConfig();
@@ -591,6 +713,9 @@ class Skebby extends Module
         $this->logMessage("SKEBBY_DEFAULT_ALPHASENDER: " . Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER'));
         $this->logMessage("SKEBBY_ORDER_RECIPIENT: " . Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
         $this->logMessage("SKEBBY_ORDER_TEMPLATE: " . Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
+        $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
+        $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
+        $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION'));
     }
 
     /**

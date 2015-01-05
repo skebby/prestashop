@@ -7,10 +7,10 @@ if (Tools::getValue('token') != Tools::encrypt(Configuration::get('PS_SHOP_NAME'
 	die('Error: Invalid Token');	
 }
 
-$skebby = new Skebby();
+$skebby_module = new Skebby();
 
 $params = array();
 $params['currency'] = '€';
 $params['total_to_pay'] = '100.0000';
 
-echo json_encode($skebby->hookOrderConfirmation($params));
+echo json_encode($skebby_module->hookOrderConfirmation($params));
