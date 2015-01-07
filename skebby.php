@@ -424,7 +424,7 @@ class Skebby extends Module
         $template = str_replace("%currency%", $params['currency'], $template);
         $template = str_replace("%total_to_pay%", $params['total_to_pay'], $template);
         
-        // Shipment vars
+        // Order based variables
         
         $template = str_replace("%civility%", $params['civility'], $template);
         $template = str_replace("%first_name%", $params['first_name'], $template);
@@ -542,6 +542,24 @@ class Skebby extends Module
                     'required' => true
                 ),
                 array(
+                    'type' => 'checkbox',
+                    'label' => $this->l('New Order notification enabled?'),
+                    'desc' => $this->l('Check this option in order to receive a notification when a new order is placed.'),
+                    'name' => 'SKEBBY_ORDER_NOTIFICATION',
+                    'required' => false,
+                    'values' => array(
+                        'query' => array(
+                            array(
+                                'id' => 'ACTIVE',
+                                'name' => $this->l('Enabled'),
+                                'val' => '1'
+                            )
+                        ),
+                        'id' => 'id',
+                        'name' => 'name'
+                    )
+                ),
+                array(
                     'type' => 'text',
                     'label' => $this->l('Order Recipient'),
                     'desc' => $this->l('Recipient receiving SMS Order Notifications'),
@@ -553,7 +571,7 @@ class Skebby extends Module
                 array(
                     'type' => 'textarea',
                     'label' => $this->l('Order message template'),
-                    'desc' => $this->l('Type the message template for orders. you can use the variables {currency} and {total_to_pay} that will be replaced in the message.'),
+                    'desc' => $this->l('Type the message template for orders. you can use the variables %currency% and %total_to_pay% that will be replaced in the message.'),
                     'name' => 'SKEBBY_ORDER_TEMPLATE',
                     'cols' => 40,
                     'rows' => 5,
@@ -580,7 +598,7 @@ class Skebby extends Module
                 array(
                     'type' => 'textarea',
                     'label' => $this->l('Shipment status template'),
-                    'desc' => $this->l('Type the message a customer receive when his order has been shipped. you can use the variables {civility} {first_name} {last_name} {order_price} {order_date} {order_reference} that will be replaced in the message.'),
+                    'desc' => $this->l('Type the message a customer receive when his order has been shipped. you can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
                     'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE',
                     'cols' => 40,
                     'rows' => 5,
@@ -634,6 +652,7 @@ class Skebby extends Module
         $helper->fields_value['SKEBBY_DEFAULT_QUALITY'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
         $helper->fields_value['SKEBBY_DEFAULT_NUMBER'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
         $helper->fields_value['SKEBBY_DEFAULT_ALPHASENDER'] = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
+        $helper->fields_value['SKEBBY_ORDER_NOTIFICATION_ACTIVE'] = (strval(Configuration::get('SKEBBY_ORDER_NOTIFICATION_ACTIVE')) == '1');
         $helper->fields_value['SKEBBY_ORDER_RECIPIENT'] = Configuration::get('SKEBBY_ORDER_RECIPIENT');
         $helper->fields_value['SKEBBY_ORDER_TEMPLATE'] = Configuration::get('SKEBBY_ORDER_TEMPLATE');
         $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'] = Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
@@ -705,6 +724,15 @@ class Skebby extends Module
                 $output .= $this->displayConfirmation($this->l('SMS Quality updated'));
             }
             
+            // Order Notification active
+            
+            $skebby_neworder_active = Tools::getValue('SKEBBY_ORDER_NOTIFICATION_ACTIVE');
+            Configuration::updateValue('SKEBBY_ORDER_NOTIFICATION', $skebby_neworder_active);
+            Configuration::updateValue('SKEBBY_ORDER_NOTIFICATION_ACTIVE', $skebby_neworder_active);
+            
+            $this->logMessage('New order notification active');
+            $this->logMessage($skebby_neworder_active);
+            
             // Order Template
             
             $skebby_order_template = strval(Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
@@ -759,13 +787,19 @@ class Skebby extends Module
      */
     private function dumpConfig()
     {
+        // general
         $this->logMessage("SKEBBY_PASSWORD: " . Tools::getValue('SKEBBY_PASSWORD'));
         $this->logMessage("SKEBBY_USERNAME: " . Tools::getValue('SKEBBY_USERNAME'));
         $this->logMessage("SKEBBY_DEFAULT_QUALITY: " . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
         $this->logMessage("SKEBBY_DEFAULT_NUMBER: " . Tools::getValue('SKEBBY_DEFAULT_NUMBER'));
         $this->logMessage("SKEBBY_DEFAULT_ALPHASENDER: " . Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER'));
+        
+        // feature new order
+        $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
         $this->logMessage("SKEBBY_ORDER_RECIPIENT: " . Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
         $this->logMessage("SKEBBY_ORDER_TEMPLATE: " . Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
+        
+        // feature shipment
         $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
         $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
         $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION'));
