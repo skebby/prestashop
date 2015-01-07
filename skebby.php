@@ -204,10 +204,39 @@ class Skebby extends Module
         
         $this->logMessage("Valid hookUpdateOrderStatus");
         
-        // Get some variables about the order.
-        
         $order = new Order(Tools::getValue('id_order'));
         $address = new Address((int) $order->id_address_delivery);
+        
+        $customer_mobile = $this->buildCustomerMobileNumber($address);
+        
+        if (! $customer_mobile) {
+            $this->logMessage("Unable to retrive customer's mobile number");
+            return false;
+        }
+        
+        $params = $this->populateOrderVariables($order, $address);
+        
+        // TODO: we should perparse and notify the user if the message excedes a single message.
+        
+        $arr = array();
+        $data['text'] = $this->buildMessageBody($params, 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
+        $data['from'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
+        $data['to'] = $customer_mobile;
+        $data['quality'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
+        
+        $this->sendSmsApi($data);
+    }
+
+    /**
+     *
+     * @param Order $order            
+     * @param Address $address            
+     * @return array
+     */
+    private function populateOrderVariables($order, $address)
+    {
+        $params = array();
+        
         $customer_civility_result = Db::getInstance()->ExecuteS('SELECT id_gender,firstname,lastname FROM ' . _DB_PREFIX_ . 'customer WHERE `id_customer` = ' . (int) $order->id_customer);
         $firstname = (isset($address->firstname)) ? $address->firstname : '';
         $lastname = (isset($address->lastname)) ? $address->lastname : '';
@@ -236,21 +265,6 @@ class Skebby extends Module
                 break;
         }
         
-        // Fetch the international prefix.
-        // if not specified. Exit.
-        
-        $call_prefix_query = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
-				SELECT `call_prefix`
-				FROM `' . _DB_PREFIX_ . 'country`
-				WHERE `id_country` = ' . (int) $address->id_country);
-        
-        // If for some reason the mobile number not specified. Exit.
-        
-        if (! isset($address->phone_mobile) || empty($address->phone_mobile)) {
-            $this->logMessage("Invalid mobile");
-            return false;
-        }
-        
         // get order date.
         // try to format the date according to language context
         
@@ -262,78 +276,22 @@ class Skebby extends Module
             $ord_date = date('d/m/Y', strtotime($order_date));
         }
         
-        // Create the SMS Message Body
-        
-        $msgbody = Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
-        
         // the order amount and currency.
         $total_pay = (isset($order->total_paid)) ? $order->total_paid : 0;
         $total_pay = $total_pay . '' . $this->context->currency->iso_code;
         
-        // prepare variables for message template replacement. The user should have specified a template for the message.
+        // Prepare variables for message template replacement.
+        // We assume the user have specified a template for the message.
         
-        $civility_data = str_replace('{civility}', $civility, $msgbody);
-        $fname = str_replace('{first_name}', $firstname, $civility_data);
-        $lname = str_replace('{last_name}', $lastname . "\r\n", $fname);
-        $product_price = str_replace('{order_price}', $total_pay, $lname);
-        $order_date = str_replace('{order_date}', $ord_date . "\r\n", $product_price);
-        $msgbody = str_replace('{order_reference}', $ref_num, $order_date);
+        $params['civility'] = $civility;
+        $params['first_name'] = $firstname;
+        $params['last_name'] = $lastname;
+        $params['order_price'] = $order_price;
+        $params['order_date'] = $order_date;
+        $params['order_reference'] = $order_reference;
         
-        $this->logMessage("The message:");
-        $this->logMessage($msgbody);
-        
-        // TODO: we should perparse and notify the user if the message excedes a single message.
-        
-        $arr = array();
-        $data['text'] = $msgbody;
-        $data['from'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
-        $data['to'] = $this->checkMobileNumber($address->phone_mobile, $call_prefix_query['call_prefix']);
-        $data['quality'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
-        
-        $this->sendSmsApi($data);
+        return $params;
     }
-    
-    
-    
-    /**
-     * 
-     * @param unknown $mobile_number
-     * @param unknown $prefix
-     * @return unknown
-     */
-    private function checkMobileNumber($mobile_number, $prefix){
-        $this->logMessage("checkMobileNumber: $mobile_number / $prefix ");
-        
-        $mobile_number = trim($mobile_number);
-        
-        // replace double zero with plus
-        if($this->startsWith($mobile_number, '00')){
-            $mobile_number =  str_replace('00', '', $mobile_number);
-            return $mobile_number;
-        }
-
-        if($this->startsWith($mobile_number, '+')){
-            $mobile_number =  str_replace('+', '', $mobile_number);
-           return $mobile_number;
-        }
-        
-        return $prefix . $mobile_number;
-        
-    }
-    
-    
-    /**
-     * 
-     * @param unknown $haystack
-     * @param unknown $needle
-     * @return boolean
-     */
-    private function startsWith($haystack, $needle) {
-    	// search backwards starting from haystack length characters from the end
-    	return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
-    }
-    
-    
 
     /**
      * When a user places an order, the tracking code integrates in the order confirmation page.
@@ -361,6 +319,69 @@ class Skebby extends Module
     }
 
     /**
+     * The user should have specified a country and mobile number.
+     *
+     * @param string $mobile_number            
+     * @param Address $address            
+     *
+     * @return string null mobile number or null
+     */
+    private function buildCustomerMobileNumber($address)
+    {
+        
+        // If for some reason the mobile number not specified in customer address. Exit.
+        if (! isset($address->phone_mobile) || empty($address->phone_mobile)) {
+            $this->logMessage("Invalid customer mobile");
+            return NULL;
+        }
+        
+        $mobile_number = $address->phone_mobile;
+        
+        // Fetch the international prefix.
+        // if not specified. Exit.
+        
+        $call_prefix_query = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
+				SELECT `call_prefix`
+				FROM `' . _DB_PREFIX_ . 'country`
+				WHERE `id_country` = ' . (int) $address->id_country);
+        
+        if (! isset($call_prefix_query['call_prefix']) || empty($call_prefix_query['call_prefix'])) {
+            $this->logMessage("Invalid customer country");
+            return NULL;
+        }
+        
+        $prefix = $call_prefix_query['call_prefix'];
+        
+        $this->logMessage("buildCustomerMobileNumber: $mobile_number / $prefix ");
+        
+        $mobile_number = trim($mobile_number);
+        
+        // replace double zero with plus
+        if ($this->startsWith($mobile_number, '00')) {
+            $mobile_number = str_replace('00', '', $mobile_number);
+            return $mobile_number;
+        }
+        
+        if ($this->startsWith($mobile_number, '+')) {
+            $mobile_number = str_replace('+', '', $mobile_number);
+            return $mobile_number;
+        }
+        
+        return $prefix . $mobile_number;
+    }
+
+    /**
+     *
+     * @param string $haystack            
+     * @param string $needle            
+     * @return boolean
+     */
+    private function startsWith($haystack, $needle)
+    {
+        return $needle === "" || strrpos($haystack, $needle, - strlen($haystack)) !== FALSE;
+    }
+
+    /**
      * Return the user's credit.
      *
      * @return number
@@ -373,19 +394,38 @@ class Skebby extends Module
     // ********************************************************************************************************
     // PRIVATES
     // ********************************************************************************************************
+    
+    /**
+     * Build an sms message merging a specified template, and given params array.
+     *
+     * @param array $params            
+     * @param string $template_id            
+     * @return string
+     */
     private function buildMessageBody($params, $template_id)
     {
-        $template = Configuration::get($template_id);
-        $message = $template;
+        // Get the template from configuration
+        $message = Configuration::get($template_id);
         
-        $message = str_replace("{currency}", $params['currency'], $message);
-        $message = str_replace("{total_to_pay}", $params['total_to_pay'], $message);
+        // Order variables
+        
+        $message = str_replace("%currency%", $params['currency'], $message);
+        $message = str_replace("%total_to_pay%", $params['total_to_pay'], $message);
+        
+        // Shipment vars
+        
+        $message = str_replace("%civility%", $params['civility'], $message);
+        $message = str_replace("%first_name%", $params['first_name'], $message);
+        $message = str_replace("%last_name%", $params['last_name'], $message);
+        $message = str_replace("%order_price%", $params['order_price'], $message);
+        $message = str_replace("%order_date%", $params['order_date'], $message);
+        $message = str_replace("%order_reference%", $params['order_reference'], $message);
         
         return $message;
     }
 
     /**
-     * Send out a SMS
+     * Send out a SMS using skebby API Client
      *
      * @param array $data            
      */
@@ -407,8 +447,9 @@ class Skebby extends Module
     }
 
     /**
+     * Configure end render the admin's module form.
      *
-     * @return unknown
+     * @return string
      */
     public function displayForm()
     {
@@ -584,7 +625,7 @@ class Skebby extends Module
         $helper->fields_value['SKEBBY_ORDER_RECIPIENT'] = Configuration::get('SKEBBY_ORDER_RECIPIENT');
         $helper->fields_value['SKEBBY_ORDER_TEMPLATE'] = Configuration::get('SKEBBY_ORDER_TEMPLATE');
         $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'] = Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
-        $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'] = (strval(Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE')) == '1' );
+        $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'] = (strval(Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE')) == '1');
         $helper->fields_value['FREE_TEXT'] = Configuration::get('FREE_TEXT');
         
         $theform = '';
@@ -683,7 +724,7 @@ class Skebby extends Module
             
             $this->logMessage('shipment active');
             $this->logMessage($skebby_shipment_active);
-
+            
             // Shipment Template
             
             $skebby_shipment_template = strval(Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
