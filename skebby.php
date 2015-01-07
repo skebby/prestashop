@@ -204,6 +204,17 @@ class Skebby extends Module
         
         $this->logMessage("Valid hookUpdateOrderStatus");
         
+        $this->sendMessageForOrder(Tools::getValue('id_order'), 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
+    }
+
+    /**
+     *
+     * @param int $id_order            
+     * @param string $template_id            
+     * @return boolean
+     */
+    public function sendMessageForOrder($id_order, $template_id)
+    {
         $order = new Order(Tools::getValue('id_order'));
         $address = new Address((int) $order->id_address_delivery);
         
@@ -218,8 +229,10 @@ class Skebby extends Module
         
         // TODO: we should perparse and notify the user if the message excedes a single message.
         
-        $arr = array();
-        $data['text'] = $this->buildMessageBody($params, 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
+        $template = Configuration::get($template_id);
+        
+        $data = array();
+        $data['text'] = $this->buildMessageBody($params, $template);
         $data['from'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
         $data['to'] = $customer_mobile;
         $data['quality'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
@@ -308,8 +321,10 @@ class Skebby extends Module
         $this->logMessage("hookOrderConfirmation");
         $this->logMessage(print_r($params, 1));
         
+        $template = Configuration::get('SKEBBY_ORDER_TEMPLATE');
+        
         $data = array();
-        $data['text'] = $this->buildMessageBody($params, 'SKEBBY_ORDER_TEMPLATE');
+        $data['text'] = $this->buildMessageBody($params, $template);
         $data['from'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
         $data['to'] = Configuration::get('SKEBBY_ORDER_RECIPIENT');
         $data['quality'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
@@ -399,29 +414,26 @@ class Skebby extends Module
      * Build an sms message merging a specified template, and given params array.
      *
      * @param array $params            
-     * @param string $template_id            
+     * @param string $template            
      * @return string
      */
-    private function buildMessageBody($params, $template_id)
+    private function buildMessageBody($params, $template)
     {
-        // Get the template from configuration
-        $message = Configuration::get($template_id);
         
         // Order variables
-        
-        $message = str_replace("%currency%", $params['currency'], $message);
-        $message = str_replace("%total_to_pay%", $params['total_to_pay'], $message);
+        $template = str_replace("%currency%", $params['currency'], $template);
+        $template = str_replace("%total_to_pay%", $params['total_to_pay'], $template);
         
         // Shipment vars
         
-        $message = str_replace("%civility%", $params['civility'], $message);
-        $message = str_replace("%first_name%", $params['first_name'], $message);
-        $message = str_replace("%last_name%", $params['last_name'], $message);
-        $message = str_replace("%order_price%", $params['order_price'], $message);
-        $message = str_replace("%order_date%", $params['order_date'], $message);
-        $message = str_replace("%order_reference%", $params['order_reference'], $message);
+        $template = str_replace("%civility%", $params['civility'], $template);
+        $template = str_replace("%first_name%", $params['first_name'], $template);
+        $template = str_replace("%last_name%", $params['last_name'], $template);
+        $template = str_replace("%order_price%", $params['order_price'], $template);
+        $template = str_replace("%order_date%", $params['order_date'], $template);
+        $template = str_replace("%order_reference%", $params['order_reference'], $template);
         
-        return $message;
+        return $template;
     }
 
     /**
