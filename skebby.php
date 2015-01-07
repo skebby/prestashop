@@ -378,8 +378,8 @@ class Skebby extends Module
         $template = Configuration::get($template_id);
         $message = $template;
         
-        $message = str_replace("%currency%", $params['currency'], $message);
-        $message = str_replace("%total_to_pay%", $params['total_to_pay'], $message);
+        $message = str_replace("{currency}", $params['currency'], $message);
+        $message = str_replace("{total_to_pay}", $params['total_to_pay'], $message);
         
         return $message;
     }
