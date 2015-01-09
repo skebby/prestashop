@@ -23,6 +23,7 @@
 * @license   http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
 */
+
 if (!defined('_PS_VERSION_'))
 	exit('');
 
@@ -180,13 +181,28 @@ class Skebby extends Module
 	 */
 	private function removeConfigKeys()
 	{
-		return (Configuration::deleteByName('SKEBBY_USERNAME') && Configuration::deleteByName('SKEBBY_PASSWORD') &&
-			 Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY') && Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER') &&
-			 Configuration::deleteByName('SKEBBY_ALPHASENDER_ACTIVE') && Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER') &&
-			 Configuration::deleteByName('SKEBBY_ORDER_TEMPLATE') && Configuration::deleteByName('SKEBBY_ORDER_RECIPIENT') &&
-			 Configuration::deleteByName('SKEBBY_ORDER_NOTIFICATION_ACTIVE') &&
-			 Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE') &&
-			 Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
+		if (!Configuration::deleteByName('SKEBBY_USERNAME'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_PASSWORD'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_ALPHASENDER_ACTIVE'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_ORDER_TEMPLATE'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_ORDER_RECIPIENT'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_ORDER_NOTIFICATION_ACTIVE'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'))
+			return false;
+		if (!Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'))
+			return false;
 	}
 
 	/**
@@ -810,8 +826,8 @@ class Skebby extends Module
 		$helper->toolbar_btn = array(
 			'save' => array(
 				'desc' => $this->l('Save'),
-				'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.'&token=' .
-					 Tools::getAdminTokenLite('AdminModules')
+				'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.'&token='.
+				Tools::getAdminTokenLite('AdminModules')
 			),
 			'back' => array(
 				'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
