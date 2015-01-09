@@ -1,8 +1,9 @@
 
 <div class="text-center">
 	<div class="btn-group">
-		<button type="button" id="credit_btn" class="btn btn-default skt-testconnection">{l s='CHECK CREDIT' mod='skebby'}</button>
-		<button type="button" id="test_btn" class="btn btn-default skt-testconnection">{l s='TEST ORDER SMS' mod='skebby'}</button>
+		<button type="button" id="credit_btn" class="btn btn-default ">{l s='CHECK REMAINING CREDIT' mod='skebby'}</button>
+		<button type="button" id="test_btn" class="btn btn-default ">{l s='TEST NEW ORDER SMS' mod='skebby'}</button>
+		<button type="button" id="testshipment_btn" class="btn btn-default ">{l s='TEST ORDER SHIPMENT SMS' mod='skebby'}</button>
 	</div>
 	<br/>
 	<br/>
@@ -42,12 +43,25 @@ window.Skebby.Client.testOrderSMS = function(token) {
 	});
 };
 
+window.Skebby.Client.testShipmentSMS = function(token) {
+	$.getJSON('/modules/skebby/testshipmentnotification.php?token=' + token).then(function(data) {
+		if (data && data.status && data.status === 'success') {
+			alert("{l s='SMS successfully sent.' mod='skebby' js=1}");
+		} else {
+			alert("{l s='SMS send failed.' mod='skebby' js=1}");
+		}
+	});
+};
+
 $(document).ready(function(){
 	$("#credit_btn").on('click', function(){
 		window.Skebby.Client.checkCredit('{$token}');
 	});
 	$("#test_btn").on('click', function(){
 		window.Skebby.Client.testOrderSMS('{$token}');
+	});
+	$("#testshipment_btn").on('click', function(){
+		window.Skebby.Client.testShipmentSMS('{$token}');
 	});
 });
 

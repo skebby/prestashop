@@ -21,7 +21,14 @@ class Skebby extends Module
      *
      * @var boolean
      */
-    private $development_mode = FALSE;
+    private $development_mode = true;
+
+    /**
+     * Should we log to file?
+     * 
+     * @var boolean
+     */
+    private $log_enabled = true;
 
     /**
      *
@@ -117,6 +124,24 @@ class Skebby extends Module
         if ($success) {
             
             Configuration::updateValue('SKEBBY_DEFAULT_QUALITY', 'classic');
+            
+            $suggested_order_template = '';
+            $suggested_order_template .= 'New order %order_reference%' . "\n";
+            $suggested_order_template .= 'from  %civility% %first_name% %last_name% ,' . "\n";
+            $suggested_order_template .= 'placed on  %order_date%' . "\n";
+            $suggested_order_template .= 'for amount %order_price%' . "\n";
+            $suggested_order_template .= 'has been placed.' . "\n";
+            
+            Configuration::updateValue('SKEBBY_ORDER_TEMPLATE', $suggested_order_template);
+            
+            $suggested_shipment_template = '';
+            $suggested_shipment_template .= 'Dear %civility% %first_name% %last_name%,' . "\n";
+            $suggested_shipment_template .= 'your order  %order_reference%' . "\n";
+            $suggested_shipment_template .= 'placed on  %order_date%' . "\n";
+            $suggested_shipment_template .= 'for amount %order_price%' . "\n";
+            $suggested_shipment_template .= 'has been shipped.' . "\n";
+            
+            Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $suggested_shipment_template);
             
             $this->logMessage("Successfully installed Skebby Module");
             $this->logMessage("Default Quality is: " . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
@@ -237,40 +262,57 @@ class Skebby extends Module
         
         $this->logMessage("Valid hookUpdateOrderStatus");
         
-        $this->sendMessageForOrder(Tools::getValue('id_order'), 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
+        $params = $this->getParamsFromOrder();
+        
+        if (! $params) {
+            $this->logMessage("Unable to load order data");
+            return false;
+        }
+        
+        return $this->sendMessageForOrder($params, 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
     }
 
     /**
      *
-     * @param int $id_order            
-     * @param string $template_id            
-     * @return boolean
+     * @return NULL Ambigous NULL, mixed>
      */
-    public function sendMessageForOrder($id_order, $template_id)
+    private function getParamsFromOrder()
     {
         $order = new Order(Tools::getValue('id_order'));
         $address = new Address((int) $order->id_address_delivery);
+        
+        $params = $this->populateOrderVariables($order, $address);
         
         $customer_mobile = $this->buildCustomerMobileNumber($address);
         
         if (! $customer_mobile) {
             $this->logMessage("Unable to retrive customer's mobile number");
-            return false;
+            return null;
         }
         
-        $params = $this->populateOrderVariables($order, $address);
+        $params['customer_mobile'] = $customer_mobile;
         
-        // TODO: we should perparse and notify the user if the message excedes a single message.
+        return $params;
+    }
+
+    /**
+     *
+     * @param array $params            
+     * @param string $template_id            
+     */
+    public function sendMessageForOrder($params, $template_id)
+    {
+        $this->logMessage(print_r($params, 1));
         
         $template = Configuration::get($template_id);
         
         $data = array();
         $data['text'] = $this->buildMessageBody($params, $template);
         $data['from'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
-        $data['to'] = $customer_mobile;
+        $data['to'] = $params['customer_mobile'];
         $data['quality'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
         
-        $this->sendSmsApi($data);
+        return $this->sendSmsApi($data);
     }
 
     /**
@@ -323,8 +365,14 @@ class Skebby extends Module
         }
         
         // the order amount and currency.
-        $total_pay = (isset($order->total_paid)) ? $order->total_paid : 0;
-        $total_pay = $total_pay . '' . $this->context->currency->iso_code;
+        $order_price = (isset($order->total_paid)) ? $order->total_paid : 0;
+        $order_price = $this->context->currency->iso_code . ' ' . $order_price;
+        
+        if (_PS_VERSION_ < '1.5.0.0') {
+            $order_reference = (isset($order->id)) ? $order->id : '';
+        } else {
+            $order_reference = (isset($order->reference)) ? $order->reference : '';
+        }
         
         // Prepare variables for message template replacement.
         // We assume the user have specified a template for the message.
@@ -347,6 +395,10 @@ class Skebby extends Module
      */
     public function hookOrderConfirmation($params)
     {
+        
+        $this->logMessage("hookOrderConfirmation");
+        
+        
         if (! $this->checkModuleStatus()) {
             $this->logMessage("Skebby module not enabled");
             return false;
@@ -357,6 +409,18 @@ class Skebby extends Module
             $this->logMessage("Used did not opted in for New Order notification");
             return false;
         }
+
+        $this->logMessage("hookOrderConfirmation");
+        $this->logMessage(print_r($params, 1));
+        
+        $params = $this->getParamsFromOrder();
+        
+        if (! $params) {
+            $this->logMessage("Unable to retreive params from order");
+        	return false;
+        }
+        
+        
         
         $this->logMessage("hookOrderConfirmation");
         $this->logMessage(print_r($params, 1));
@@ -460,18 +524,26 @@ class Skebby extends Module
     private function buildMessageBody($params, $template)
     {
         
-        // Order variables
-        $template = str_replace("%currency%", $params['currency'], $template);
-        $template = str_replace("%total_to_pay%", $params['total_to_pay'], $template);
-        
-        // Order based variables
-        
-        $template = str_replace("%civility%", $params['civility'], $template);
-        $template = str_replace("%first_name%", $params['first_name'], $template);
-        $template = str_replace("%last_name%", $params['last_name'], $template);
-        $template = str_replace("%order_price%", $params['order_price'], $template);
-        $template = str_replace("%order_date%", $params['order_date'], $template);
-        $template = str_replace("%order_reference%", $params['order_reference'], $template);
+        // TODO: we should perparse and notify the user if the message excedes a single message.        
+
+        if (isset($params['civility'])) {
+            $template = str_replace("%civility%", $params['civility'], $template);
+        }
+        if (isset($params['first_name'])) {
+            $template = str_replace("%first_name%", $params['first_name'], $template);
+        }
+        if (isset($params['last_name'])) {
+            $template = str_replace("%last_name%", $params['last_name'], $template);
+        }
+        if (isset($params['order_price'])) {
+            $template = str_replace("%order_price%", $params['order_price'], $template);
+        }
+        if (isset($params['order_date'])) {
+            $template = str_replace("%order_date%", $params['order_date'], $template);
+        }
+        if (isset($params['order_reference'])) {
+            $template = str_replace("%order_reference%", $params['order_reference'], $template);
+        }
         
         return $template;
     }
@@ -640,7 +712,7 @@ class Skebby extends Module
                     'name' => 'SKEBBY_ORDER_TEMPLATE',
                     'cols' => 40,
                     'rows' => 5,
-                    'required' => true
+                    'required' => false
                 ),
                 array(
                     'type' => 'checkbox',
@@ -822,26 +894,29 @@ class Skebby extends Module
             $this->logMessage('New order notification active');
             $this->logMessage($skebby_neworder_active);
             
-            // New Order notification Template
-            
-            $skebby_order_template = strval(Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
-            if (! $skebby_order_template || empty($skebby_order_template))
-                $output .= $this->displayError($this->l('Invalid order template'));
-            else {
-                Configuration::updateValue('SKEBBY_ORDER_TEMPLATE', $skebby_order_template);
-                $output .= $this->displayConfirmation($this->l('Order Template updated'));
-            }
-            
-            // New Order Recipient
-            
-            $skebby_order_recipient = strval(Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
-            $skebby_order_recipient = $this->normalizeNumber($skebby_order_recipient);
-            
-            if (! $skebby_order_recipient || empty($skebby_order_recipient) || ! Validate::isGenericName($skebby_order_recipient) || ! $this->isValidMobileNumber($skebby_order_recipient))
-                $output .= $this->displayError($this->l('Invalid Order Recipient'));
-            else {
-                Configuration::updateValue('SKEBBY_ORDER_RECIPIENT', $skebby_order_recipient);
-                $output .= $this->displayConfirmation($this->l('Order Recipient Updated'));
+            if ($skebby_neworder_active) {
+                
+                // New Order notification Template
+                
+                $skebby_order_template = strval(Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
+                if (! $skebby_order_template || empty($skebby_order_template))
+                    $output .= $this->displayError($this->l('Invalid order template'));
+                else {
+                    Configuration::updateValue('SKEBBY_ORDER_TEMPLATE', $skebby_order_template);
+                    $output .= $this->displayConfirmation($this->l('Order Template updated'));
+                }
+                
+                // New Order Recipient
+                
+                $skebby_order_recipient = strval(Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
+                $skebby_order_recipient = $this->normalizeNumber($skebby_order_recipient);
+                
+                if (! $skebby_order_recipient || empty($skebby_order_recipient) || ! Validate::isGenericName($skebby_order_recipient) || ! $this->isValidMobileNumber($skebby_order_recipient))
+                    $output .= $this->displayError($this->l('Invalid Order Recipient'));
+                else {
+                    Configuration::updateValue('SKEBBY_ORDER_RECIPIENT', $skebby_order_recipient);
+                    $output .= $this->displayConfirmation($this->l('Order Recipient Updated'));
+                }
             }
             
             // Shipment active
@@ -954,6 +1029,9 @@ class Skebby extends Module
      */
     private function logMessage($message)
     {
+        if (! $this->log_enabled) {
+            return;
+        }
         $this->logger->logDebug($message);
     }
 
@@ -962,6 +1040,10 @@ class Skebby extends Module
      */
     private function initLogger()
     {
+        if (! $this->log_enabled) {
+            return;
+        }
+        
         $this->logger = new FileLogger(0);
         $this->logger->setFilename(_PS_ROOT_DIR_ . '/log/skebby.log');
     }
