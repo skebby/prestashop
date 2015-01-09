@@ -1,4 +1,30 @@
 <?php
+/**
+* 2007-2015 PrestaShop
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+* @author    PrestaShop SA <contact@prestashop.com>
+* @copyright 2007-2015 PrestaShop SA
+* @license   http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
+*/
+
+
 if (! defined('_PS_VERSION_'))
     exit('');
 
@@ -497,7 +523,7 @@ class Skebby extends Module
      */
     private function startsWith($haystack, $needle)
     {
-        return $needle === "" || strrpos($haystack, $needle, - strlen($haystack)) !== FALSE;
+        return $needle === "" || strrpos($haystack, $needle, - Tools::strlen($haystack)) !== FALSE;
     }
 
     /**
@@ -570,7 +596,7 @@ class Skebby extends Module
             $sender_number = $data['from'];
         }
         
-        $result = $this->api_client->sendSMS($recipients, $text, $text, $sender_number, $sender_string);
+        $result = $this->api_client->sendSMS($recipients, $text, $sms_type, $sender_number, $sender_string);
         
         $this->logMessage($result);
         
@@ -605,6 +631,10 @@ class Skebby extends Module
                 'name' => 'Classic+'
             )
         );
+        
+        
+        $fields_form = array();
+        array_push($fields_form, array());
         
         // Configuration Form
         $fields_form[0]['form'] = array(
@@ -789,12 +819,12 @@ class Skebby extends Module
         $helper->fields_value['SKEBBY_DEFAULT_QUALITY'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
         $helper->fields_value['SKEBBY_DEFAULT_NUMBER'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
         $helper->fields_value['SKEBBY_DEFAULT_ALPHASENDER'] = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
-        $helper->fields_value['SKEBBY_ALPHASENDER_ACTIVE'] = (strval(Configuration::get('SKEBBY_ALPHASENDER_ACTIVE')) == '1');
-        $helper->fields_value['SKEBBY_ORDER_NOTIFICATION_ACTIVE'] = (strval(Configuration::get('SKEBBY_ORDER_NOTIFICATION_ACTIVE')) == '1');
+        $helper->fields_value['SKEBBY_ALPHASENDER_ACTIVE'] = ((string)Configuration::get('SKEBBY_ALPHASENDER_ACTIVE') == '1');
+        $helper->fields_value['SKEBBY_ORDER_NOTIFICATION_ACTIVE'] = ((string)Configuration::get('SKEBBY_ORDER_NOTIFICATION_ACTIVE') == '1');
         $helper->fields_value['SKEBBY_ORDER_RECIPIENT'] = Configuration::get('SKEBBY_ORDER_RECIPIENT');
         $helper->fields_value['SKEBBY_ORDER_TEMPLATE'] = Configuration::get('SKEBBY_ORDER_TEMPLATE');
         $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'] = Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
-        $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'] = (strval(Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE')) == '1');
+        $helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'] = ((string)Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE') == '1');
         $helper->fields_value['FREE_TEXT'] = Configuration::get('FREE_TEXT');
         
         $theform = '';
@@ -821,7 +851,7 @@ class Skebby extends Module
         $output = null;
         
         if (Tools::isSubmit('submit' . $this->name)) {
-            $skebby_username = strval(Tools::getValue('SKEBBY_USERNAME'));
+            $skebby_username = (string)Tools::getValue('SKEBBY_USERNAME');
             if (! $skebby_username || empty($skebby_username) || ! Validate::isGenericName($skebby_username))
                 $output .= $this->displayError($this->l('Invalid username'));
             else {
@@ -831,7 +861,7 @@ class Skebby extends Module
             
             // Password field
             
-            $skebby_password = strval(Tools::getValue('SKEBBY_PASSWORD'));
+            $skebby_password = (string)Tools::getValue('SKEBBY_PASSWORD');
             if (! $skebby_password || empty($skebby_password) || ! Validate::isGenericName($skebby_password))
                 $output .= $this->displayError($this->l('Invalid password'));
             else {
@@ -851,7 +881,7 @@ class Skebby extends Module
             // Alphanumeric sender. we validate just if the user opted in.
             
             if ($use_alpha_sender) {
-                $skebby_alpha_sender = strval(Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER'));
+                $skebby_alpha_sender = (string)Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER');
                 $skebby_alpha_sender = trim($skebby_alpha_sender);
                 
                 if (! $skebby_alpha_sender || empty($skebby_alpha_sender) || ! $this->isValidAlphasender($skebby_alpha_sender)) {
@@ -864,7 +894,7 @@ class Skebby extends Module
             
             // Mobile number field. only if not alpha sender
             
-            $skebby_mobile_number = strval(Tools::getValue('SKEBBY_DEFAULT_NUMBER'));
+            $skebby_mobile_number = (string)Tools::getValue('SKEBBY_DEFAULT_NUMBER');
             $skebby_mobile_number = $this->normalizeNumber($skebby_mobile_number);
             
             if (! $skebby_mobile_number || empty($skebby_mobile_number) || ! $this->isValidMobileNumber($skebby_mobile_number))
@@ -877,7 +907,7 @@ class Skebby extends Module
             
             // Default quality
             
-            $skebby_default_quality = strval(Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
+            $skebby_default_quality = (string)Tools::getValue('SKEBBY_DEFAULT_QUALITY');
             if (! $skebby_default_quality || empty($skebby_default_quality) || ! Validate::isGenericName($skebby_default_quality)) {
                 $output .= $this->displayError($this->l('Invalid quality'));
             } else {
@@ -898,7 +928,7 @@ class Skebby extends Module
                 
                 // New Order notification Template
                 
-                $skebby_order_template = strval(Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
+                $skebby_order_template = (string)Tools::getValue('SKEBBY_ORDER_TEMPLATE');
                 if (! $skebby_order_template || empty($skebby_order_template))
                     $output .= $this->displayError($this->l('Invalid order template'));
                 else {
@@ -908,7 +938,7 @@ class Skebby extends Module
                 
                 // New Order Recipient
                 
-                $skebby_order_recipient = strval(Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
+                $skebby_order_recipient = (string)Tools::getValue('SKEBBY_ORDER_RECIPIENT');
                 $skebby_order_recipient = $this->normalizeNumber($skebby_order_recipient);
                 
                 if (! $skebby_order_recipient || empty($skebby_order_recipient) || ! Validate::isGenericName($skebby_order_recipient) || ! $this->isValidMobileNumber($skebby_order_recipient))
@@ -932,7 +962,7 @@ class Skebby extends Module
             // Shipment Template
             if ($skebby_shipment_active) {
                 
-                $skebby_shipment_template = strval(Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
+                $skebby_shipment_template = (string)Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
                 if (! $skebby_shipment_template || empty($skebby_shipment_template) || ! Validate::isGenericName($skebby_shipment_template))
                     $output .= $this->displayError($this->l('Invalid Shipment template'));
                 else {
