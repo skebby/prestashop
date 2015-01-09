@@ -392,11 +392,11 @@ class Skebby extends Module
 		
 		$order_date = (isset($order->date_upd)) ? $order->date_upd : 0;
 		
-		if ($this->context->language->id == 1) {
-			$ord_date = date('m/d/Y', strtotime($order_date));
-		} else {
-			$ord_date = date('d/m/Y', strtotime($order_date));
-		}
+// 		if ($this->context->language->id == 1) {
+// 			$order_date = date('m/d/Y', strtotime($order_date));
+// 		} else {
+// 			$order_date = date('d/m/Y', strtotime($order_date));
+// 		}
 		
 		// the order amount and currency.
 		$order_price = (isset($order->total_paid)) ? $order->total_paid : 0;
@@ -1039,7 +1039,7 @@ class Skebby extends Module
 	 */
 	private function isValidAlphasender($alpha_sender)
 	{
-		return true;
+		return (trim($alpha_sender) !== '');
 	}
 
 	/**
