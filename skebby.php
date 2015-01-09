@@ -21,14 +21,14 @@ class Skebby extends Module
      *
      * @var boolean
      */
-    private $development_mode = true;
+    private $development_mode = FALSE;
 
     /**
      * Should we log to file?
      * 
      * @var boolean
      */
-    private $log_enabled = true;
+    private $log_enabled = FALSE;
 
     /**
      *
