@@ -5,7 +5,7 @@
 </div>
 
 	<div class="pull-right well">
-		<p>{l s='If you don't have a skebby account yet' mod='skebby'}</p>
+		<p>{l s="If you don't have a skebby account yet" mod='skebby'}</p>
 		<div class="text-center">
 			<a class="btn btn-primary" href="http://www.skebby.com/sms-bulk-solutions/business-sms-sign-up/?origin=prestashop" target="_blank">{l s='signup now' mod='skebby'}</a>
 		</div>				
