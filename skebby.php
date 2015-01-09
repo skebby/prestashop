@@ -708,7 +708,7 @@ class Skebby extends Module
                 array(
                     'type' => 'textarea',
                     'label' => $this->l('Order message template'),
-                    'desc' => $this->l('Type the message template for orders. you can use the variables %currency% and %total_to_pay% that will be replaced in the message.'),
+                    'desc' => $this->l('Type the message template for orders. You can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
                     'name' => 'SKEBBY_ORDER_TEMPLATE',
                     'cols' => 40,
                     'rows' => 5,
@@ -717,7 +717,7 @@ class Skebby extends Module
                 array(
                     'type' => 'checkbox',
                     'label' => $this->l('Shipment Status notification enabled?'),
-                    'desc' => $this->l('Check this option in order to send automatically a message to your customer when an order is shipped. The meaasge will be sent if customer mobile phone and country are specified.'),
+                    'desc' => $this->l('Check this option in order to send automatically a message to your customer when an order is shipped. The message will be sent if customer mobile phone and country are specified.'),
                     'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION',
                     'required' => false,
                     'values' => array(
@@ -735,7 +735,7 @@ class Skebby extends Module
                 array(
                     'type' => 'textarea',
                     'label' => $this->l('Shipment Status template'),
-                    'desc' => $this->l('Type the message a customer receive when the order status transitions to SHIPPED. you can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
+                    'desc' => $this->l('Type the message a customer receive when the order status transitions to SHIPPED. You can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
                     'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE',
                     'cols' => 40,
                     'rows' => 5,
