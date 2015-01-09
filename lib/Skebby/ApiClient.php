@@ -185,7 +185,8 @@ class SkebbyApiClient
 				return 'status=failed&message=' . self::NET_ERROR;
 			}
 			return $response;
-		} else {
+		}
+		else {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

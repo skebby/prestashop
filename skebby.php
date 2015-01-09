@@ -169,10 +169,11 @@ class Skebby extends Module
 			
 			Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $suggested_shipment_template);
 			
-			$this->logMessage("Successfully installed Skebby Module");
-			$this->logMessage("Default Quality is: " . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
-		} else {
-			$this->logMessage("Error Installing Skebby Module");
+			$this->logMessage('Successfully installed Skebby Module');
+			$this->logMessage('Default Quality is: ' . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
+		}
+		else {
+			$this->logMessage('Error Installing Skebby Module');
 		}
 		
 		return $success;
@@ -293,12 +294,12 @@ class Skebby extends Module
 			return false;
 		}
 		
-		$this->logMessage("Valid hookUpdateOrderStatus");
+		$this->logMessage('Valid hookUpdateOrderStatus');
 		
 		$params = $this->getParamsFromOrder();
 		
 		if (! $params) {
-			$this->logMessage("Unable to load order data");
+			$this->logMessage('Unable to load order data');
 			return false;
 		}
 		
@@ -307,7 +308,7 @@ class Skebby extends Module
 
 	/**
 	 *
-	 * @return NULL Ambigous NULL, mixed>
+	 * @return null Ambigous null, mixed>
 	 */
 	private function getParamsFromOrder()
 	{
@@ -393,11 +394,11 @@ class Skebby extends Module
 		
 		$order_date = (isset($order->date_upd)) ? $order->date_upd : 0;
 		
-// 		if ($this->context->language->id == 1) {
-// 			$order_date = date('m/d/Y', strtotime($order_date));
-// 		} else {
-// 			$order_date = date('d/m/Y', strtotime($order_date));
-// 		}
+		// if ($this->context->language->id == 1) {
+		// $order_date = date('m/d/Y', strtotime($order_date));
+		// } else {
+		// $order_date = date('d/m/Y', strtotime($order_date));
+		// }
 		
 		// the order amount and currency.
 		$order_price = (isset($order->total_paid)) ? $order->total_paid : 0;
@@ -405,7 +406,8 @@ class Skebby extends Module
 		
 		if (_PS_VERSION_ < '1.5.0.0') {
 			$order_reference = (isset($order->id)) ? $order->id : '';
-		} else {
+		}
+		else {
 			$order_reference = (isset($order->reference)) ? $order->reference : '';
 		}
 		
@@ -430,7 +432,6 @@ class Skebby extends Module
 	 */
 	public function hookOrderConfirmation($params)
 	{
-
 		if (! $this->checkModuleStatus()) {
 			$this->logMessage('Skebby module not enabled');
 			return false;
@@ -478,7 +479,7 @@ class Skebby extends Module
 		// If for some reason the mobile number not specified in customer address. Exit.
 		if (! isset($address->phone_mobile) || empty($address->phone_mobile)) {
 			$this->logMessage('Invalid customer mobile');
-			return NULL;
+			return null;
 		}
 		
 		$mobile_number = $address->phone_mobile;
@@ -494,7 +495,7 @@ class Skebby extends Module
 		
 		if (! isset($call_prefix_query['call_prefix']) || empty($call_prefix_query['call_prefix'])) {
 			$this->logMessage('Invalid customer country');
-			return NULL;
+			return null;
 		}
 		
 		$prefix = $call_prefix_query['call_prefix'];
@@ -537,7 +538,6 @@ class Skebby extends Module
 	{
 		return $this->api_client->getGatewayCredit();
 	}
-	
 
 	/**
 	 * Build an sms message merging a specified template, and given params array.
@@ -589,7 +589,8 @@ class Skebby extends Module
 		if ($this->shouldUseAlphasender()) {
 			$sender_number = '';
 			$sender_string = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
-		} else {
+		}
+		else {
 			$sender_string = '';
 			$sender_number = $data['from'];
 		}
@@ -890,7 +891,8 @@ class Skebby extends Module
 				
 				if (! $skebby_alpha_sender || empty($skebby_alpha_sender) || ! $this->isValidAlphasender($skebby_alpha_sender)) {
 					$output .= $this->displayError($this->l('Invalid Alpha Sender'));
-				} else {
+				}
+				else {
 					Configuration::updateValue('SKEBBY_DEFAULT_ALPHASENDER', $skebby_alpha_sender);
 					$output .= $this->displayConfirmation($this->l('Alpha Sender updated'));
 				}
@@ -914,7 +916,8 @@ class Skebby extends Module
 			$skebby_default_quality = (string) Tools::getValue('SKEBBY_DEFAULT_QUALITY');
 			if (! $skebby_default_quality || empty($skebby_default_quality) || ! Validate::isGenericName($skebby_default_quality)) {
 				$output .= $this->displayError($this->l('Invalid quality'));
-			} else {
+			}
+			else {
 				Configuration::updateValue('SKEBBY_DEFAULT_QUALITY', $skebby_default_quality);
 				$output .= $this->displayConfirmation($this->l('SMS Quality updated'));
 			}
