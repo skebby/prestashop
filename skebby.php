@@ -113,7 +113,8 @@ class Skebby extends Module
 			$this->warning = $this->l('Missing Skebby Account Username');
 			
 			// Checking Extension
-		if (! extension_loaded('curl') || ! ini_get('allow_url_fopen')) {
+		if (! extension_loaded('curl') || ! ini_get('allow_url_fopen'))
+		{
 			if (! extension_loaded('curl') && ! ini_get('allow_url_fopen'))
 				$this->warning = $this->l('You must enable cURL extension and allow_url_fopen option on your server if you want to use this module.');
 			else 
@@ -138,7 +139,8 @@ class Skebby extends Module
 	 */
 	public function install()
 	{
-		if (Shop::isFeatureActive()) {
+		if (Shop::isFeatureActive())
+		{
 			Shop::setContext(Shop::CONTEXT_ALL);
 		}
 		
@@ -146,7 +148,8 @@ class Skebby extends Module
 		
 		$success = (parent::install() && $this->hookInstall());
 		
-		if ($success) {
+		if ($success)
+		{
 			
 			Configuration::updateValue('SKEBBY_DEFAULT_QUALITY', 'classic');
 			
@@ -223,7 +226,8 @@ class Skebby extends Module
 		
 		$success = (parent::uninstall() && $this->removeConfigKeys() && $this->hookUninstall());
 		
-		if ($success) {
+		if ($success)
+		{
 			$this->logMessage('Skebby Module Uninstalled Successfully');
 		}
 		
@@ -273,7 +277,8 @@ class Skebby extends Module
 	{
 		$this->logMessage('Enter hookUpdateOrderStatus');
 		
-		if (! $this->checkModuleStatus()) {
+		if (! $this->checkModuleStatus())
+		{
 			$this->logMessage('Skebby module not enabled');
 			return false;
 		}
@@ -281,13 +286,15 @@ class Skebby extends Module
 		$id_order_state = Tools::getValue('id_order_state');
 		
 		// if the order is not being shipped. Exit.
-		if ($id_order_state != 4) {
+		if ($id_order_state != 4)
+		{
 			$this->logMessage("Order state do not match state 4. state is $id_order_state");
 			return false;
 		}
 		
 		// If the user didn't opted for notifications. Exit.
-		if (! $this->shouldNotifyUponShipment()) {
+		if (! $this->shouldNotifyUponShipment())
+		{
 			$this->logMessage('User did not opted in for shipment notification');
 			return false;
 		}
@@ -296,7 +303,8 @@ class Skebby extends Module
 		
 		$params = $this->getParamsFromOrder();
 		
-		if (! $params) {
+		if (! $params)
+		{
 			$this->logMessage('Unable to load order data');
 			return false;
 		}
@@ -317,7 +325,8 @@ class Skebby extends Module
 		
 		$customer_mobile = $this->buildCustomerMobileNumber($address);
 		
-		if (! $customer_mobile) {
+		if (! $customer_mobile)
+		{
 			$this->logMessage('Unable to retrive customers mobile number');
 			return null;
 		}
@@ -366,13 +375,15 @@ class Skebby extends Module
 		
 		$civility_value = '';
 		if (Tools::strtolower($firstname) === Tools::strtolower($customer_civility_result[0]['firstname']) &&
-			 Tools::strtolower($lastname) === Tools::strtolower($customer_civility_result[0]['lastname'])) {
+			 Tools::strtolower($lastname) === Tools::strtolower($customer_civility_result[0]['lastname']))
+		{
 			$civility_value = (isset($customer_civility_result['0']['id_gender'])) ? $customer_civility_result['0']['id_gender'] : '';
 		}
 		
 		// Guess the civilty for given user. Defaults to no civilty.
 		
-		switch ($civility_value) {
+		switch ($civility_value)
+		{
 			case 1:
 				$civility = 'Mr.';
 				break;
@@ -402,10 +413,12 @@ class Skebby extends Module
 		$order_price = (isset($order->total_paid)) ? $order->total_paid : 0;
 		$order_price = $this->context->currency->iso_code . ' ' . $order_price;
 		
-		if (_PS_VERSION_ < '1.5.0.0') {
+		if (_PS_VERSION_ < '1.5.0.0')
+		{
 			$order_reference = (isset($order->id)) ? $order->id : '';
 		}
-		else {
+		else
+		{
 			$order_reference = (isset($order->reference)) ? $order->reference : '';
 		}
 		
@@ -430,20 +443,23 @@ class Skebby extends Module
 	 */
 	public function hookOrderConfirmation($params)
 	{
-		if (! $this->checkModuleStatus()) {
+		if (! $this->checkModuleStatus())
+		{
 			$this->logMessage('Skebby module not enabled');
 			return false;
 		}
 		
 		// If the user didn't opted for New Order notifications. Exit.
-		if (! $this->shouldNotifyUponNewOrder()) {
+		if (! $this->shouldNotifyUponNewOrder())
+		{
 			$this->logMessage('Used did not opted in for New Order notification');
 			return false;
 		}
 		
 		$params = $this->getParamsFromOrder();
 		
-		if (! $params) {
+		if (! $params)
+		{
 			$this->logMessage('Unable to retreive params from order');
 			return false;
 		}
@@ -475,7 +491,8 @@ class Skebby extends Module
 	{
 		
 		// If for some reason the mobile number not specified in customer address. Exit.
-		if (! isset($address->phone_mobile) || empty($address->phone_mobile)) {
+		if (! isset($address->phone_mobile) || empty($address->phone_mobile))
+		{
 			$this->logMessage('Invalid customer mobile');
 			return null;
 		}
@@ -491,7 +508,8 @@ class Skebby extends Module
 				FROM `' . _DB_PREFIX_ . 'country`
 				WHERE `id_country` = ' . (int) $address->id_country);
 		
-		if (! isset($call_prefix_query['call_prefix']) || empty($call_prefix_query['call_prefix'])) {
+		if (! isset($call_prefix_query['call_prefix']) || empty($call_prefix_query['call_prefix']))
+		{
 			$this->logMessage('Invalid customer country');
 			return null;
 		}
@@ -503,12 +521,14 @@ class Skebby extends Module
 		$mobile_number = trim($mobile_number);
 		
 		// replace double zero with plus
-		if ($this->startsWith($mobile_number, '00')) {
+		if ($this->startsWith($mobile_number, '00'))
+		{
 			$mobile_number = str_replace('00', '', $mobile_number);
 			return $mobile_number;
 		}
 		
-		if ($this->startsWith($mobile_number, '+')) {
+		if ($this->startsWith($mobile_number, '+'))
+		{
 			$mobile_number = str_replace('+', '', $mobile_number);
 			return $mobile_number;
 		}
@@ -583,11 +603,13 @@ class Skebby extends Module
 		$text = $data['text'];
 		$sms_type = $data['quality'];
 		
-		if ($this->shouldUseAlphasender()) {
+		if ($this->shouldUseAlphasender())
+		{
 			$sender_number = '';
 			$sender_string = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
 		}
-		else {
+		else
+		{
 			$sender_string = '';
 			$sender_number = $data['from'];
 		}
@@ -852,11 +874,13 @@ class Skebby extends Module
 	{
 		$output = null;
 		
-		if (Tools::isSubmit('submit' . $this->name)) {
+		if (Tools::isSubmit('submit' . $this->name))
+		{
 			$skebby_username = (string) Tools::getValue('SKEBBY_USERNAME');
 			if (! $skebby_username || empty($skebby_username) || ! Validate::isGenericName($skebby_username))
 				$output .= $this->displayError($this->l('Invalid username'));
-			else {
+			else
+			{
 				Configuration::updateValue('SKEBBY_USERNAME', $skebby_username);
 				$output .= $this->displayConfirmation($this->l('Username updated'));
 			}
@@ -866,7 +890,8 @@ class Skebby extends Module
 			$skebby_password = (string) Tools::getValue('SKEBBY_PASSWORD');
 			if (! $skebby_password || empty($skebby_password) || ! Validate::isGenericName($skebby_password))
 				$output .= $this->displayError($this->l('Invalid password'));
-			else {
+			else
+			{
 				Configuration::updateValue('SKEBBY_PASSWORD', $skebby_password);
 				$output .= $this->displayConfirmation($this->l('Password updated'));
 			}
@@ -882,14 +907,16 @@ class Skebby extends Module
 			
 			// Alphanumeric sender. we validate just if the user opted in.
 			
-			if ($use_alpha_sender) {
+			if ($use_alpha_sender)
+			{
 				$skebby_alpha_sender = (string) Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER');
 				$skebby_alpha_sender = trim($skebby_alpha_sender);
 				
 				if (! $skebby_alpha_sender || empty($skebby_alpha_sender) || ! $this->isValidAlphasender($skebby_alpha_sender))
 					$output .= $this->displayError($this->l('Invalid Alpha Sender'));
 				
-				else {
+				else
+				{
 					Configuration::updateValue('SKEBBY_DEFAULT_ALPHASENDER', $skebby_alpha_sender);
 					$output .= $this->displayConfirmation($this->l('Alpha Sender updated'));
 				}
@@ -902,7 +929,8 @@ class Skebby extends Module
 			
 			if (! $skebby_mobile_number || empty($skebby_mobile_number) || ! $this->isValidMobileNumber($skebby_mobile_number))
 				$output .= $this->displayError($this->l('Invalid Sender Mobile Number'));
-			else {
+			else
+			{
 				
 				Configuration::updateValue('SKEBBY_DEFAULT_NUMBER', $skebby_mobile_number);
 				$output .= $this->displayConfirmation($this->l('Sender Number updated'));
@@ -914,7 +942,8 @@ class Skebby extends Module
 			if (! $skebby_default_quality || empty($skebby_default_quality) || ! Validate::isGenericName($skebby_default_quality))
 				$output .= $this->displayError($this->l('Invalid quality'));
 			
-			else {
+			else
+			{
 				Configuration::updateValue('SKEBBY_DEFAULT_QUALITY', $skebby_default_quality);
 				$output .= $this->displayConfirmation($this->l('SMS Quality updated'));
 			}
@@ -928,14 +957,16 @@ class Skebby extends Module
 			$this->logMessage('New order notification active');
 			$this->logMessage($skebby_neworder_active);
 			
-			if ($skebby_neworder_active) {
+			if ($skebby_neworder_active)
+			{
 				
 				// New Order notification Template
 				
 				$skebby_order_template = (string) Tools::getValue('SKEBBY_ORDER_TEMPLATE');
 				if (! $skebby_order_template || empty($skebby_order_template))
 					$output .= $this->displayError($this->l('Invalid order template'));
-				else {
+				else
+				{
 					Configuration::updateValue('SKEBBY_ORDER_TEMPLATE', $skebby_order_template);
 					$output .= $this->displayConfirmation($this->l('Order Template updated'));
 				}
@@ -948,7 +979,8 @@ class Skebby extends Module
 				if (! $skebby_order_recipient || empty($skebby_order_recipient) || ! Validate::isGenericName($skebby_order_recipient) ||
 					 ! $this->isValidMobileNumber($skebby_order_recipient))
 					$output .= $this->displayError($this->l('Invalid Order Recipient'));
-				else {
+				else
+				{
 					Configuration::updateValue('SKEBBY_ORDER_RECIPIENT', $skebby_order_recipient);
 					$output .= $this->displayConfirmation($this->l('Order Recipient Updated'));
 				}
@@ -965,12 +997,14 @@ class Skebby extends Module
 			$this->logMessage($skebby_shipment_active);
 			
 			// Shipment Template
-			if ($skebby_shipment_active) {
+			if ($skebby_shipment_active)
+			{
 				
 				$skebby_shipment_template = (string) Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
 				if (! $skebby_shipment_template || empty($skebby_shipment_template) || ! Validate::isGenericName($skebby_shipment_template))
 					$output .= $this->displayError($this->l('Invalid Shipment template'));
-				else {
+				else
+				{
 					Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $skebby_shipment_template);
 					$output .= $this->displayConfirmation($this->l('Shipment Template updated'));
 				}
@@ -988,11 +1022,10 @@ class Skebby extends Module
 	 */
 	private function dumpConfig()
 	{
-		if (! $this->development_mode) {
+		if (! $this->development_mode)
 			return;
-		}
-		
-		// general
+			
+			// general
 		$this->logMessage('SKEBBY_PASSWORD: ' . Tools::getValue('SKEBBY_PASSWORD'));
 		$this->logMessage('SKEBBY_USERNAME: ' . Tools::getValue('SKEBBY_USERNAME'));
 		$this->logMessage('SKEBBY_DEFAULT_QUALITY: ' . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
@@ -1064,9 +1097,9 @@ class Skebby extends Module
 	 */
 	private function logMessage($message)
 	{
-		if (! $this->log_enabled) {
+		if (! $this->log_enabled)
 			return;
-		}
+		
 		$this->logger->logDebug($message);
 	}
 
@@ -1075,9 +1108,8 @@ class Skebby extends Module
 	 */
 	private function initLogger()
 	{
-		if (! $this->log_enabled) {
+		if (! $this->log_enabled)
 			return;
-		}
 		
 		$this->logger = new FileLogger(0);
 		$this->logger->setFilename(_PS_ROOT_DIR_ . '/log/skebby.log');
