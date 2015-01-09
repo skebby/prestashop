@@ -23,7 +23,6 @@
 * @license   http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
 */
-
 if (! defined('_PS_VERSION_'))
 	exit('');
 
@@ -172,9 +171,8 @@ class Skebby extends Module
 			$this->logMessage('Successfully installed Skebby Module');
 			$this->logMessage('Default Quality is: ' . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
 		}
-		else {
+		else
 			$this->logMessage('Error Installing Skebby Module');
-		}
 		
 		return $success;
 	}
@@ -550,24 +548,23 @@ class Skebby extends Module
 	{
 		
 		// TODO: we should perparse and notify the user if the message excedes a single message.
-		if (isset($params['civility'])) {
+		if (isset($params['civility']))
 			$template = str_replace('%civility%', $params['civility'], $template);
-		}
-		if (isset($params['first_name'])) {
+		
+		if (isset($params['first_name']))
 			$template = str_replace('%first_name%', $params['first_name'], $template);
-		}
-		if (isset($params['last_name'])) {
+		
+		if (isset($params['last_name']))
 			$template = str_replace('%last_name%', $params['last_name'], $template);
-		}
-		if (isset($params['order_price'])) {
+		
+		if (isset($params['order_price']))
 			$template = str_replace('%order_price%', $params['order_price'], $template);
-		}
-		if (isset($params['order_date'])) {
+		
+		if (isset($params['order_date']))
 			$template = str_replace('%order_date%', $params['order_date'], $template);
-		}
-		if (isset($params['order_reference'])) {
+		
+		if (isset($params['order_reference']))
 			$template = str_replace('%order_reference%', $params['order_reference'], $template);
-		}
 		
 		return $template;
 	}
@@ -889,9 +886,9 @@ class Skebby extends Module
 				$skebby_alpha_sender = (string) Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER');
 				$skebby_alpha_sender = trim($skebby_alpha_sender);
 				
-				if (! $skebby_alpha_sender || empty($skebby_alpha_sender) || ! $this->isValidAlphasender($skebby_alpha_sender)) {
+				if (! $skebby_alpha_sender || empty($skebby_alpha_sender) || ! $this->isValidAlphasender($skebby_alpha_sender))
 					$output .= $this->displayError($this->l('Invalid Alpha Sender'));
-				}
+				
 				else {
 					Configuration::updateValue('SKEBBY_DEFAULT_ALPHASENDER', $skebby_alpha_sender);
 					$output .= $this->displayConfirmation($this->l('Alpha Sender updated'));
@@ -914,9 +911,9 @@ class Skebby extends Module
 			// Default quality
 			
 			$skebby_default_quality = (string) Tools::getValue('SKEBBY_DEFAULT_QUALITY');
-			if (! $skebby_default_quality || empty($skebby_default_quality) || ! Validate::isGenericName($skebby_default_quality)) {
+			if (! $skebby_default_quality || empty($skebby_default_quality) || ! Validate::isGenericName($skebby_default_quality))
 				$output .= $this->displayError($this->l('Invalid quality'));
-			}
+			
 			else {
 				Configuration::updateValue('SKEBBY_DEFAULT_QUALITY', $skebby_default_quality);
 				$output .= $this->displayConfirmation($this->l('SMS Quality updated'));
