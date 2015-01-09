@@ -140,9 +140,8 @@ class Skebby extends Module
 	public function install()
 	{
 		if (Shop::isFeatureActive())
-		{
 			Shop::setContext(Shop::CONTEXT_ALL);
-		}
+		
 		
 		$this->logMessage('Installing Skebby Module');
 		
@@ -414,16 +413,12 @@ class Skebby extends Module
 		$order_price = $this->context->currency->iso_code . ' ' . $order_price;
 		
 		if (_PS_VERSION_ < '1.5.0.0')
-		{
 			$order_reference = (isset($order->id)) ? $order->id : '';
-		}
 		else
-		{
 			$order_reference = (isset($order->reference)) ? $order->reference : '';
-		}
-		
-		// Prepare variables for message template replacement.
-		// We assume the user have specified a template for the message.
+			
+			// Prepare variables for message template replacement.
+			// We assume the user have specified a template for the message.
 		
 		$params['civility'] = $civility;
 		$params['first_name'] = $firstname;
@@ -489,7 +484,6 @@ class Skebby extends Module
 	 */
 	private function buildCustomerMobileNumber($address)
 	{
-		
 		// If for some reason the mobile number not specified in customer address. Exit.
 		if (! isset($address->phone_mobile) || empty($address->phone_mobile))
 		{
@@ -566,7 +560,6 @@ class Skebby extends Module
 	 */
 	private function buildMessageBody($params, $template)
 	{
-		
 		// TODO: we should perparse and notify the user if the message excedes a single message.
 		if (isset($params['civility']))
 			$template = str_replace('%civility%', $params['civility'], $template);
