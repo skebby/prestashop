@@ -142,7 +142,7 @@ class Skebby extends Module
 			Shop::setContext(Shop::CONTEXT_ALL);
 		}
 		
-		$this->logMessage("Installing Skebby Module");
+		$this->logMessage('Installing Skebby Module');
 		
 		$success = (parent::install() && $this->hookInstall());
 		
@@ -219,12 +219,12 @@ class Skebby extends Module
 	 */
 	public function uninstall()
 	{
-		$this->logMessage("Uninstalling Skebby Module");
+		$this->logMessage('Uninstalling Skebby Module');
 		
 		$success = (parent::uninstall() && $this->removeConfigKeys() && $this->hookUninstall());
 		
 		if ($success) {
-			$this->logMessage("Skebby Module Uninstalled Successfully");
+			$this->logMessage('Skebby Module Uninstalled Successfully');
 		}
 		
 		$this->dumpConfig();
@@ -271,10 +271,10 @@ class Skebby extends Module
 	 */
 	public function hookUpdateOrderStatus($params)
 	{
-		$this->logMessage("Enter hookUpdateOrderStatus");
+		$this->logMessage('Enter hookUpdateOrderStatus');
 		
 		if (! $this->checkModuleStatus()) {
-			$this->logMessage("Skebby module not enabled");
+			$this->logMessage('Skebby module not enabled');
 			return false;
 		}
 		
@@ -999,24 +999,24 @@ class Skebby extends Module
 		}
 		
 		// general
-		$this->logMessage("SKEBBY_PASSWORD: " . Tools::getValue('SKEBBY_PASSWORD'));
-		$this->logMessage("SKEBBY_USERNAME: " . Tools::getValue('SKEBBY_USERNAME'));
-		$this->logMessage("SKEBBY_DEFAULT_QUALITY: " . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
+		$this->logMessage('SKEBBY_PASSWORD: ' . Tools::getValue('SKEBBY_PASSWORD'));
+		$this->logMessage('SKEBBY_USERNAME: ' . Tools::getValue('SKEBBY_USERNAME'));
+		$this->logMessage('SKEBBY_DEFAULT_QUALITY: ' . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
 		
 		// Sender number or alphanumeric sender
-		$this->logMessage("SKEBBY_DEFAULT_NUMBER: " . Tools::getValue('SKEBBY_DEFAULT_NUMBER'));
-		$this->logMessage("SKEBBY_DEFAULT_ALPHASENDER: " . Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER'));
-		$this->logMessage("SKEBBY_ALPHASENDER_ACTIVE: " . Tools::getValue('SKEBBY_ALPHASENDER_ACTIVE'));
+		$this->logMessage('SKEBBY_DEFAULT_NUMBER: ' . Tools::getValue('SKEBBY_DEFAULT_NUMBER'));
+		$this->logMessage('SKEBBY_DEFAULT_ALPHASENDER: ' . Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER'));
+		$this->logMessage('SKEBBY_ALPHASENDER_ACTIVE: ' . Tools::getValue('SKEBBY_ALPHASENDER_ACTIVE'));
 		
 		// feature new order
-		$this->logMessage("SKEBBY_ORDER_NOTIFICATION_ACTIVE: " . Tools::getValue('SKEBBY_ORDER_NOTIFICATION_ACTIVE'));
-		$this->logMessage("SKEBBY_ORDER_RECIPIENT: " . Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
-		$this->logMessage("SKEBBY_ORDER_TEMPLATE: " . Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
+		$this->logMessage('SKEBBY_ORDER_NOTIFICATION_ACTIVE: ' . Tools::getValue('SKEBBY_ORDER_NOTIFICATION_ACTIVE'));
+		$this->logMessage('SKEBBY_ORDER_RECIPIENT: ' . Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
+		$this->logMessage('SKEBBY_ORDER_TEMPLATE: ' . Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
 		
 		// feature shipment
-		$this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
-		$this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
-		$this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION'));
+		$this->logMessage('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE: ' . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
+		$this->logMessage('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE: ' . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
+		$this->logMessage('SKEBBY_SHIPMENTSTATUS_NOTIFICATION: ' . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION'));
 	}
 
 	/**
