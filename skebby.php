@@ -23,6 +23,7 @@
 * @license   http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
 */
+
 if (! defined('_PS_VERSION_'))
 	exit('');
 
@@ -288,7 +289,7 @@ class Skebby extends Module
 		
 		// If the user didn't opted for notifications. Exit.
 		if (! $this->shouldNotifyUponShipment()) {
-			$this->logMessage("Used did not opted in for shipment notification");
+			$this->logMessage('User did not opted in for shipment notification');
 			return false;
 		}
 		
@@ -318,7 +319,7 @@ class Skebby extends Module
 		$customer_mobile = $this->buildCustomerMobileNumber($address);
 		
 		if (! $customer_mobile) {
-			$this->logMessage("Unable to retrive customer's mobile number");
+			$this->logMessage('Unable to retrive customers mobile number');
 			return null;
 		}
 		
@@ -429,30 +430,26 @@ class Skebby extends Module
 	 */
 	public function hookOrderConfirmation($params)
 	{
-		$this->logMessage("hookOrderConfirmation");
-		
+
 		if (! $this->checkModuleStatus()) {
-			$this->logMessage("Skebby module not enabled");
+			$this->logMessage('Skebby module not enabled');
 			return false;
 		}
 		
 		// If the user didn't opted for New Order notifications. Exit.
 		if (! $this->shouldNotifyUponNewOrder()) {
-			$this->logMessage("Used did not opted in for New Order notification");
+			$this->logMessage('Used did not opted in for New Order notification');
 			return false;
 		}
-		
-		$this->logMessage("hookOrderConfirmation");
-		$this->logMessage(print_r($params, 1));
 		
 		$params = $this->getParamsFromOrder();
 		
 		if (! $params) {
-			$this->logMessage("Unable to retreive params from order");
+			$this->logMessage('Unable to retreive params from order');
 			return false;
 		}
 		
-		$this->logMessage("hookOrderConfirmation");
+		$this->logMessage('hookOrderConfirmation');
 		$this->logMessage(print_r($params, 1));
 		
 		$template = Configuration::get('SKEBBY_ORDER_TEMPLATE');
@@ -480,7 +477,7 @@ class Skebby extends Module
 		
 		// If for some reason the mobile number not specified in customer address. Exit.
 		if (! isset($address->phone_mobile) || empty($address->phone_mobile)) {
-			$this->logMessage("Invalid customer mobile");
+			$this->logMessage('Invalid customer mobile');
 			return NULL;
 		}
 		
@@ -496,7 +493,7 @@ class Skebby extends Module
 				WHERE `id_country` = ' . (int) $address->id_country);
 		
 		if (! isset($call_prefix_query['call_prefix']) || empty($call_prefix_query['call_prefix'])) {
-			$this->logMessage("Invalid customer country");
+			$this->logMessage('Invalid customer country');
 			return NULL;
 		}
 		
@@ -528,7 +525,7 @@ class Skebby extends Module
 	 */
 	private function startsWith($haystack, $needle)
 	{
-		return $needle === "" || strrpos($haystack, $needle, - Tools::strlen($haystack)) !== FALSE;
+		return $needle === '' || strrpos($haystack, $needle, - Tools::strlen($haystack)) !== FALSE;
 	}
 
 	/**
@@ -541,10 +538,7 @@ class Skebby extends Module
 		return $this->api_client->getGatewayCredit();
 	}
 	
-	// ********************************************************************************************************
-	// PRIVATES
-	// ********************************************************************************************************
-	
+
 	/**
 	 * Build an sms message merging a specified template, and given params array.
 	 *
@@ -557,22 +551,22 @@ class Skebby extends Module
 		
 		// TODO: we should perparse and notify the user if the message excedes a single message.
 		if (isset($params['civility'])) {
-			$template = str_replace("%civility%", $params['civility'], $template);
+			$template = str_replace('%civility%', $params['civility'], $template);
 		}
 		if (isset($params['first_name'])) {
-			$template = str_replace("%first_name%", $params['first_name'], $template);
+			$template = str_replace('%first_name%', $params['first_name'], $template);
 		}
 		if (isset($params['last_name'])) {
-			$template = str_replace("%last_name%", $params['last_name'], $template);
+			$template = str_replace('%last_name%', $params['last_name'], $template);
 		}
 		if (isset($params['order_price'])) {
-			$template = str_replace("%order_price%", $params['order_price'], $template);
+			$template = str_replace('%order_price%', $params['order_price'], $template);
 		}
 		if (isset($params['order_date'])) {
-			$template = str_replace("%order_date%", $params['order_date'], $template);
+			$template = str_replace('%order_date%', $params['order_date'], $template);
 		}
 		if (isset($params['order_reference'])) {
-			$template = str_replace("%order_reference%", $params['order_reference'], $template);
+			$template = str_replace('%order_reference%', $params['order_reference'], $template);
 		}
 		
 		return $template;
@@ -585,7 +579,7 @@ class Skebby extends Module
 	 */
 	private function sendSmsApi(array $data)
 	{
-		$this->logMessage("*********************** sendSmsApi ***********************");
+		$this->logMessage('*********************** sendSmsApi ***********************');
 		$this->logMessage(print_r($data, 1));
 		
 		$recipients = $data['to'];
@@ -1026,7 +1020,7 @@ class Skebby extends Module
 	 */
 	private function isValidMobileNumber($mobile_number)
 	{
-		return preg_match("/^[0-9]{8,12}$/", $mobile_number);
+		return preg_match('/^[0-9]{8,12}$/', $mobile_number);
 	}
 
 	/**
