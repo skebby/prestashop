@@ -56,7 +56,8 @@ class SkebbyApiClient
      * @param string $optional_headers            
      * @return unknown
      */
-    public function sendSMS($recipients, $text, $sms_type = '', $sender_number = '', $sender_string = '', $user_reference = '', $charset = '', $optional_headers = null)
+    public function sendSMS($recipients, $text, $sms_type = '', $sender_number = '', $sender_string = '', $user_reference = '', $charset = '', 
+        $optional_headers = null)
     {
         
         // Validate recipients
@@ -68,14 +69,13 @@ class SkebbyApiClient
         
         $method = $this->normalizeSMSType($sms_type);
         
-
-        $parameters = 'method=' . urlencode($method) . '&' . 'username=' . urlencode($this->username) . '&' . 'password=' . urlencode($this->password) . '&' . 'text=' . urlencode($text) . '&' . 'recipients[]=' . implode('&recipients[]=', $recipients);
+        $parameters = 'method=' . urlencode($method) . '&' . 'username=' . urlencode($this->username) . '&' . 'password=' . urlencode($this->password) .
+             '&' . 'text=' . urlencode($text) . '&' . 'recipients[]=' . implode('&recipients[]=', $recipients);
         
         if ($sender_number != '' && $sender_string != '') {
             parse_str('status=failed&message=' . self::SENDER_ERROR, $result);
             return $result;
         }
-        
         
         $parameters .= $sender_number != '' ? '&sender_number=' . urlencode($sender_number) : '';
         $parameters .= $sender_string != '' ? '&sender_string=' . urlencode($sender_string) : '';
@@ -99,12 +99,12 @@ class SkebbyApiClient
     /**
      * Translate a given smstype to a skebby internal name.
      * Defaults to SMSTYPE Classic.
-     * 
-     * @param sms_type
+     *
+     * @param
+     *            sms_type
      */
-    private function normalizeSMSType($sms_type='')
+    private function normalizeSMSType($sms_type = '')
     {
-        
         $method = '';
         
         switch ($sms_type) {
@@ -142,7 +142,8 @@ class SkebbyApiClient
      */
     public function getGatewayCredit($charset = '')
     {
-        $parameters = 'method=' . urlencode(self::METHOD_GET_CREDIT) . '&' . 'username=' . urlencode($this->username) . '&' . 'password=' . urlencode($this->password);
+        $parameters = 'method=' . urlencode(self::METHOD_GET_CREDIT) . '&' . 'username=' . urlencode($this->username) . '&' . 'password=' .
+             urlencode($this->password);
         
         switch ($charset) {
             case 'UTF-8':
