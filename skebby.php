@@ -251,7 +251,7 @@ class Skebby extends Module
 	private function shouldNotifyUponShipment()
 	{
 		return Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE') == 1 &&
-			 Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE') != '';
+			Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE') != '';
 	}
 
 	/**
@@ -382,7 +382,7 @@ class Skebby extends Module
 		
 		$civility_value = '';
 		if (Tools::strtolower($firstname) === Tools::strtolower($customer_civility_result[0]['firstname']) &&
-			 Tools::strtolower($lastname) === Tools::strtolower($customer_civility_result[0]['lastname']))
+			Tools::strtolower($lastname) === Tools::strtolower($customer_civility_result[0]['lastname']))
 			$civility_value = (isset($customer_civility_result['0']['id_gender'])) ? $customer_civility_result['0']['id_gender'] : '';
 			
 			// Guess the civilty for given user. Defaults to no civilty.
@@ -847,7 +847,7 @@ class Skebby extends Module
 		$helper->fields_value['SKEBBY_ORDER_TEMPLATE'] = Configuration::get('SKEBBY_ORDER_TEMPLATE');
 		$helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'] = Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE');
 		$helper->fields_value['SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'] = ((string)Configuration::get('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE') ==
-			 '1');
+			'1');
 		$helper->fields_value['FREE_TEXT'] = Configuration::get('FREE_TEXT');
 		
 		$theform = '';
@@ -976,7 +976,7 @@ class Skebby extends Module
 				$skebby_order_recipient = $this->normalizeNumber($skebby_order_recipient);
 				
 				if (!$skebby_order_recipient || empty($skebby_order_recipient) || !Validate::isGenericName($skebby_order_recipient) ||
-					 !$this->isValidMobileNumber($skebby_order_recipient))
+					!$this->isValidMobileNumber($skebby_order_recipient))
 					$output .= $this->displayError($this->l('Invalid Order Recipient'));
 				else
 				{
