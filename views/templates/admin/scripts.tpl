@@ -1,8 +1,8 @@
 
 <div class="text-center">
 	<div class="btn-group">
-		<button type="button" id="credit_btn" class="btn btn-default skt-testconnection">CHECK CREDIT</button>
-		<button type="button" id="test_btn" class="btn btn-default skt-testconnection">TEST ORDER SMS</button>
+		<button type="button" id="credit_btn" class="btn btn-default skt-testconnection">{l s='CHECK CREDIT' mod='skebby'}</button>
+		<button type="button" id="test_btn" class="btn btn-default skt-testconnection">{l s='TEST ORDER SMS' mod='skebby'}</button>
 	</div>
 	<br/>
 	<br/>
@@ -17,13 +17,12 @@
 
 window.Skebby = window.Skebby || {};
 window.Skebby.Client = window.Skebby.Client || {};
-
+window.Skebby.Client.defaultCurrency = '€';
 
 window.Skebby.Client.checkCredit = function(token) {
 	$.getJSON('/modules/skebby/checkcredit.php?token=' + token).then(function(data) {
 		if (data && data.status && data.status === 'success') {
-			console.debug(data);
-			var creditText = '€ ' + data.credit_left;
+			var creditText = window.Skebby.Client.defaultCurrency + ' ' + data.credit_left;
 			$('#credit-response').html(creditText).removeClass('alert-danger').addClass('alert-success').show();
 		} else {
 			var failedText = data.message;

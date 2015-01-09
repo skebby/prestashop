@@ -16,6 +16,14 @@ class Skebby extends Module
     private $logger;
 
     /**
+     * Are we in develoment mode?
+     * In develoment mode the log is active.
+     *
+     * @var boolean
+     */
+    private $development_mode = FALSE;
+
+    /**
      *
      * @var SkebbyApiClient
      */
@@ -126,7 +134,7 @@ class Skebby extends Module
      */
     private function removeConfigKeys()
     {
-        return (Configuration::deleteByName('SKEBBY_USERNAME') && Configuration::deleteByName('SKEBBY_PASSWORD') && Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY') && Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER') && Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER') && Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
+        return (Configuration::deleteByName('SKEBBY_USERNAME') && Configuration::deleteByName('SKEBBY_PASSWORD') && Configuration::deleteByName('SKEBBY_DEFAULT_QUALITY') && Configuration::deleteByName('SKEBBY_DEFAULT_ALPHASENDER') && Configuration::deleteByName('SKEBBY_ALPHASENDER_ACTIVE') && Configuration::deleteByName('SKEBBY_DEFAULT_NUMBER') && Configuration::deleteByName('SKEBBY_ORDER_TEMPLATE') && Configuration::deleteByName('SKEBBY_ORDER_RECIPIENT') && Configuration::deleteByName('SKEBBY_ORDER_NOTIFICATION_ACTIVE') && Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE') && Configuration::deleteByName('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
     }
 
     /**
@@ -179,6 +187,26 @@ class Skebby extends Module
     }
 
     /**
+     * Returns true if the user has opted in for new Order notification.
+     *
+     * @return boolean
+     */
+    private function shouldNotifyUponNewOrder()
+    {
+        return Configuration::get('SKEBBY_ORDER_NOTIFICATION_ACTIVE') == 1 && Configuration::get('SKEBBY_ORDER_TEMPLATE') != '';
+    }
+
+    /**
+     * Should we use the specified Alphanumeric Sender instead of a mobile number?
+     *
+     * @return boolean
+     */
+    private function shouldUseAlphasender()
+    {
+        return Configuration::get('SKEBBY_ALPHASENDER_ACTIVE') == 1 && Configuration::get('SKEBBY_DEFAULT_ALPHASENDER') != '';
+    }
+
+    /**
      * Hook the event of shipping an order.
      *
      * @param unknown $params            
@@ -187,6 +215,11 @@ class Skebby extends Module
     public function hookUpdateOrderStatus($params)
     {
         $this->logMessage("Enter hookUpdateOrderStatus");
+        
+        if (! $this->checkModuleStatus()) {
+            $this->logMessage("Skebby module not enabled");
+            return false;
+        }
         
         $id_order_state = Tools::getValue('id_order_state');
         
@@ -315,6 +348,13 @@ class Skebby extends Module
     public function hookOrderConfirmation($params)
     {
         if (! $this->checkModuleStatus()) {
+            $this->logMessage("Skebby module not enabled");
+            return false;
+        }
+        
+        // If the user didn't opted for New Order notifications. Exit.
+        if (! $this->shouldNotifyUponNewOrder()) {
+            $this->logMessage("Used did not opted in for New Order notification");
             return false;
         }
         
@@ -449,9 +489,16 @@ class Skebby extends Module
         $recipients = $data['to'];
         $text = $data['text'];
         $sms_type = $data['quality'];
-        $sender_number = $data['from'];
         
-        $result = $this->api_client->sendSMS($recipients, $text, $text, $sender_number);
+        if ($this->shouldUseAlphasender()) {
+            $sender_number = '';
+            $sender_string = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
+        } else {
+            $sender_string = '';
+            $sender_number = $data['from'];
+        }
+        
+        $result = $this->api_client->sendSMS($recipients, $text, $text, $sender_number, $sender_string);
         
         $this->logMessage($result);
         
@@ -533,18 +580,36 @@ class Skebby extends Module
                     'required' => true
                 ),
                 array(
+                    'type' => 'checkbox',
+                    'label' => $this->l('Use Alphanumeric Sender instead of mobile number?'),
+                    'desc' => $this->l('Check this option if you prefer to send your sms using a string alias instead of a mobile number. Some restrictions apply.'),
+                    'name' => 'SKEBBY_ALPHASENDER',
+                    'required' => false,
+                    'values' => array(
+                        'query' => array(
+                            array(
+                                'id' => 'ACTIVE',
+                                'name' => $this->l('Prefer Alphanumeric Sender'),
+                                'val' => '1'
+                            )
+                        ),
+                        'id' => 'id',
+                        'name' => 'name'
+                    )
+                ),
+                array(
                     'type' => 'text',
                     'label' => $this->l('Alphanumeric Sender'),
-                    'desc' => $this->l('An alphanumeric sender registered on Skebby'),
-                    'hint' => $this->l('Please refer to website docs for AGCOM specifications'),
+                    'desc' => $this->l('An Alphanumeric Sender registered on Skebby. Please refer to website docs for AGCOM specifications.'),
+                    'hint' => $this->l('Please refer to website docs for Italian AGCOM specifications'),
                     'name' => 'SKEBBY_DEFAULT_ALPHASENDER',
                     'size' => 20,
-                    'required' => true
+                    'required' => false
                 ),
                 array(
                     'type' => 'checkbox',
                     'label' => $this->l('New Order notification enabled?'),
-                    'desc' => $this->l('Check this option in order to receive a notification when a new order is placed.'),
+                    'desc' => $this->l('Check this option in order to receive a notification when a New Order is placed.'),
                     'name' => 'SKEBBY_ORDER_NOTIFICATION',
                     'required' => false,
                     'values' => array(
@@ -566,7 +631,7 @@ class Skebby extends Module
                     'hint' => $this->l('Please refer to website docs for AGCOM specifications'),
                     'name' => 'SKEBBY_ORDER_RECIPIENT',
                     'size' => 20,
-                    'required' => true
+                    'required' => false
                 ),
                 array(
                     'type' => 'textarea',
@@ -579,7 +644,7 @@ class Skebby extends Module
                 ),
                 array(
                     'type' => 'checkbox',
-                    'label' => $this->l('Shipment status notification enabled?'),
+                    'label' => $this->l('Shipment Status notification enabled?'),
                     'desc' => $this->l('Check this option in order to send automatically a message to your customer when an order is shipped. The meaasge will be sent if customer mobile phone and country are specified.'),
                     'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION',
                     'required' => false,
@@ -597,8 +662,8 @@ class Skebby extends Module
                 ),
                 array(
                     'type' => 'textarea',
-                    'label' => $this->l('Shipment status template'),
-                    'desc' => $this->l('Type the message a customer receive when his order has been shipped. you can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
+                    'label' => $this->l('Shipment Status template'),
+                    'desc' => $this->l('Type the message a customer receive when the order status transitions to SHIPPED. you can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
                     'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE',
                     'cols' => 40,
                     'rows' => 5,
@@ -652,6 +717,7 @@ class Skebby extends Module
         $helper->fields_value['SKEBBY_DEFAULT_QUALITY'] = Configuration::get('SKEBBY_DEFAULT_QUALITY');
         $helper->fields_value['SKEBBY_DEFAULT_NUMBER'] = Configuration::get('SKEBBY_DEFAULT_NUMBER');
         $helper->fields_value['SKEBBY_DEFAULT_ALPHASENDER'] = Configuration::get('SKEBBY_DEFAULT_ALPHASENDER');
+        $helper->fields_value['SKEBBY_ALPHASENDER_ACTIVE'] = (strval(Configuration::get('SKEBBY_ALPHASENDER_ACTIVE')) == '1');
         $helper->fields_value['SKEBBY_ORDER_NOTIFICATION_ACTIVE'] = (strval(Configuration::get('SKEBBY_ORDER_NOTIFICATION_ACTIVE')) == '1');
         $helper->fields_value['SKEBBY_ORDER_RECIPIENT'] = Configuration::get('SKEBBY_ORDER_RECIPIENT');
         $helper->fields_value['SKEBBY_ORDER_TEMPLATE'] = Configuration::get('SKEBBY_ORDER_TEMPLATE');
@@ -701,12 +767,35 @@ class Skebby extends Module
                 $output .= $this->displayConfirmation($this->l('Password updated'));
             }
             
-            // Mobile number field
+            // Alpha sender Opt-in
+            
+            $use_alpha_sender = Tools::getValue('SKEBBY_ALPHASENDER_ACTIVE');
+            Configuration::updateValue('SKEBBY_ALPHASENDER', $use_alpha_sender);
+            Configuration::updateValue('SKEBBY_ALPHASENDER_ACTIVE', $use_alpha_sender);
+            
+            $this->logMessage('Use alpha sender instead of a sender number');
+            $this->logMessage($use_alpha_sender);
+            
+            // Alphanumeric sender. we validate just if the user opted in.
+            
+            if ($use_alpha_sender) {
+                $skebby_alpha_sender = strval(Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER'));
+                $skebby_alpha_sender = trim($skebby_alpha_sender);
+                
+                if (! $skebby_alpha_sender || empty($skebby_alpha_sender) || ! $this->isValidAlphasender($skebby_alpha_sender)) {
+                    $output .= $this->displayError($this->l('Invalid Alpha Sender'));
+                } else {
+                    Configuration::updateValue('SKEBBY_DEFAULT_ALPHASENDER', $skebby_alpha_sender);
+                    $output .= $this->displayConfirmation($this->l('Alpha Sender updated'));
+                }
+            }
+            
+            // Mobile number field. only if not alpha sender
             
             $skebby_mobile_number = strval(Tools::getValue('SKEBBY_DEFAULT_NUMBER'));
             $skebby_mobile_number = $this->normalizeNumber($skebby_mobile_number);
             
-            if (! $skebby_mobile_number || empty($skebby_mobile_number) || ! Validate::isGenericName($skebby_mobile_number) || ! $this->isValidMobileNumber($skebby_mobile_number))
+            if (! $skebby_mobile_number || empty($skebby_mobile_number) || ! $this->isValidMobileNumber($skebby_mobile_number))
                 $output .= $this->displayError($this->l('Invalid Sender Mobile Number'));
             else {
                 
@@ -717,14 +806,14 @@ class Skebby extends Module
             // Default quality
             
             $skebby_default_quality = strval(Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
-            if (! $skebby_default_quality || empty($skebby_default_quality) || ! Validate::isGenericName($skebby_default_quality))
+            if (! $skebby_default_quality || empty($skebby_default_quality) || ! Validate::isGenericName($skebby_default_quality)) {
                 $output .= $this->displayError($this->l('Invalid quality'));
-            else {
+            } else {
                 Configuration::updateValue('SKEBBY_DEFAULT_QUALITY', $skebby_default_quality);
                 $output .= $this->displayConfirmation($this->l('SMS Quality updated'));
             }
             
-            // Order Notification active
+            // New Order Notification active
             
             $skebby_neworder_active = Tools::getValue('SKEBBY_ORDER_NOTIFICATION_ACTIVE');
             Configuration::updateValue('SKEBBY_ORDER_NOTIFICATION', $skebby_neworder_active);
@@ -733,17 +822,17 @@ class Skebby extends Module
             $this->logMessage('New order notification active');
             $this->logMessage($skebby_neworder_active);
             
-            // Order Template
+            // New Order notification Template
             
             $skebby_order_template = strval(Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
-            if (! $skebby_order_template || empty($skebby_order_template) || ! Validate::isGenericName($skebby_order_template))
+            if (! $skebby_order_template || empty($skebby_order_template))
                 $output .= $this->displayError($this->l('Invalid order template'));
             else {
                 Configuration::updateValue('SKEBBY_ORDER_TEMPLATE', $skebby_order_template);
                 $output .= $this->displayConfirmation($this->l('Order Template updated'));
             }
             
-            // Order Recipient
+            // New Order Recipient
             
             $skebby_order_recipient = strval(Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
             $skebby_order_recipient = $this->normalizeNumber($skebby_order_recipient);
@@ -766,13 +855,15 @@ class Skebby extends Module
             $this->logMessage($skebby_shipment_active);
             
             // Shipment Template
-            
-            $skebby_shipment_template = strval(Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
-            if (! $skebby_shipment_template || empty($skebby_shipment_template) || ! Validate::isGenericName($skebby_shipment_template))
-                $output .= $this->displayError($this->l('Invalid order template'));
-            else {
-                Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $skebby_shipment_template);
-                $output .= $this->displayConfirmation($this->l('Shipment Template updated'));
+            if ($skebby_shipment_active) {
+                
+                $skebby_shipment_template = strval(Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
+                if (! $skebby_shipment_template || empty($skebby_shipment_template) || ! Validate::isGenericName($skebby_shipment_template))
+                    $output .= $this->displayError($this->l('Invalid Shipment template'));
+                else {
+                    Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $skebby_shipment_template);
+                    $output .= $this->displayConfirmation($this->l('Shipment Template updated'));
+                }
             }
             
             $this->logMessage('Updated config Values');
@@ -787,15 +878,22 @@ class Skebby extends Module
      */
     private function dumpConfig()
     {
+        if (! $this->development_mode) {
+            return;
+        }
+        
         // general
         $this->logMessage("SKEBBY_PASSWORD: " . Tools::getValue('SKEBBY_PASSWORD'));
         $this->logMessage("SKEBBY_USERNAME: " . Tools::getValue('SKEBBY_USERNAME'));
         $this->logMessage("SKEBBY_DEFAULT_QUALITY: " . Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
+        
+        // Sender number or alphanumeric sender
         $this->logMessage("SKEBBY_DEFAULT_NUMBER: " . Tools::getValue('SKEBBY_DEFAULT_NUMBER'));
         $this->logMessage("SKEBBY_DEFAULT_ALPHASENDER: " . Tools::getValue('SKEBBY_DEFAULT_ALPHASENDER'));
+        $this->logMessage("SKEBBY_ALPHASENDER_ACTIVE: " . Tools::getValue('SKEBBY_ALPHASENDER_ACTIVE'));
         
         // feature new order
-        $this->logMessage("SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE: " . Tools::getValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_ACTIVE'));
+        $this->logMessage("SKEBBY_ORDER_NOTIFICATION_ACTIVE: " . Tools::getValue('SKEBBY_ORDER_NOTIFICATION_ACTIVE'));
         $this->logMessage("SKEBBY_ORDER_RECIPIENT: " . Tools::getValue('SKEBBY_ORDER_RECIPIENT'));
         $this->logMessage("SKEBBY_ORDER_TEMPLATE: " . Tools::getValue('SKEBBY_ORDER_TEMPLATE'));
         
@@ -813,6 +911,19 @@ class Skebby extends Module
     private function isValidMobileNumber($mobile_number)
     {
         return preg_match("/^[0-9]{8,12}$/", $mobile_number);
+    }
+
+    /**
+     * We do not implement the validation now.
+     * Is too complex.
+     * Will be done in next release.
+     *
+     * @param string $alpha_sender            
+     * @return boolean
+     */
+    private function isValidAlphasender($alpha_sender)
+    {
+        return true;
     }
 
     /**
