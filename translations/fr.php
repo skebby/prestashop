@@ -1,5 +1,4 @@
 <?php
-
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{skebby}prestashop>skebby_1c3e9ab48b606fa9a00486c2a5651e36'] = 'Skebby SMS';
