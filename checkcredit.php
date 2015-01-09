@@ -23,6 +23,7 @@
 * @license   http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
 */
+
 include (dirname(__FILE__) . '/../../config/config.inc.php');
 include (dirname(__FILE__) . '/skebby.php');
 
