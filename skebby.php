@@ -1262,7 +1262,7 @@ class Skebby extends Module
 	    $helper_list->shopLinkType = '';
 	    $helper_list->no_link = true;
 	    $helper_list->show_toolbar = true;
-	    $helper_list->simple_header = false;
+	    $helper_list->simple_header = true; // set false
 	    $helper_list->identifier = 'id';
 	    $helper_list->table = 'customers';
 	    $helper_list->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
