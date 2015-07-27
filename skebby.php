@@ -128,6 +128,26 @@ class Skebby extends Module
 		$this->api_client->setCredentials(Configuration::get('SKEBBY_USERNAME'), Configuration::get('SKEBBY_PASSWORD'));
 	}
 
+
+	/**
+	 * Return a boolean with
+	 *
+	 * @return boolean
+	 */
+	public function isConfigured(){
+
+		if (!Configuration::get('SKEBBY_DEFAULT_NUMBER'))
+		    return false;
+
+		if (!Configuration::get('SKEBBY_PASSWORD'))
+		   return false;
+
+		return true;
+
+	}
+
+
+
 	/**
 	 * Install the Plugin registering to the payment and order hooks
 	 *
@@ -871,12 +891,15 @@ class Skebby extends Module
 
 		$this->context->smarty->assign($data);
 
-		$theform .= $this->display(__FILE__, 'views/templates/admin/intro.tpl');
+		if(!$this->isConfigured()){
+			$theform .= $this->display(__FILE__, 'views/templates/admin/configured.tpl');
+		}else{
+			$theform .= $this->display(__FILE__, 'views/templates/admin/intro.tpl');
+		}
+
+
 		$theform .= $helper->generateForm($fields_form);
-		// $data = array ();
-		// $data ['token'] = Tools::encrypt ( Configuration::get ( 'PS_SHOP_NAME' ) );
-		// $this->context->smarty->assign ( $data );
-		// $theform .= $this->display ( __FILE__, 'views/templates/admin/scripts.tpl' );
+
 
 		return $theform;
 	}
