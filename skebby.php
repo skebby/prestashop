@@ -928,6 +928,7 @@ class Skebby extends Module
 // 		$theform .= $this->renderExportForm();
 // 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="tutorials">';
+		$theform .= $this->display(__FILE__, 'views/templates/admin/tutorials.tpl');
 		$theform .= '</div>';
 		$theform .= '</div>';
 
