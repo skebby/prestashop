@@ -24,51 +24,50 @@
 *}
 <div class="panel" id="fieldset_0">
 												
-<div class="panel-heading">
-	<img src="/modules/skebby/logo.png" alt="Intro">{l s='How it works' mod='skebby'}
-</div>
-
-<div class="row">
-	<div class="col-md-8">
-		<h3>LOREM IPSUM</h3>
-		<ul>
-			<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
-			<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
-		</ul>
-		<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
+	<div class="panel-heading">
+		<img src="/modules/skebby/logo.png" alt="Intro">{l s='How it works' mod='skebby'}
 	</div>
-	<div class="col-md-4">
+
+	<div class="row">
+		<div class="col-md-8">
+			<h3>LOREM IPSUM</h3>
+			<ul>
+				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
+				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
+			</ul>
+			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
+		</div>
+		<div class="col-md-4">
+		
+			VIDEO PLACEHOLDER
 	
-		VIDEO PLACEHOLDER
-
+		</div>
 	</div>
 
 </div>
 
+<div class="panel" id="fieldset_0">
 
-
-
-
-<div class="panel-heading">
-	<img src="/modules/skebby/logo.png" alt="Intro">{l s='How it works' mod='skebby'}
-</div>
-
-<div class="row">
-	<div class="col-md-8">
-		<h3>LOREM IPSUM SIT AMET DOLOR SCHIENUS QUE</h3>
-		<ul>
-			<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
-			<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
-		</ul>
-		<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
+	<div class="panel-heading">
+		<img src="/modules/skebby/logo.png" alt="Intro">{l s='How it works' mod='skebby'}
 	</div>
-	<div class="col-md-4">
+
+	<div class="row">
+		<div class="col-md-8">
+			<h3>LOREM IPSUM SIT AMET DOLOR SCHIENUS QUE</h3>
+			<ul>
+				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
+				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
+			</ul>
+			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
+		</div>
+		<div class="col-md-4">
+		
+			<img src="/modules/skebby/logo.png" alt="Intro"><br/>
+			<a href="btn">GUARDA LA DEMO SMS DA WEB</a>
 	
-		<img src="/modules/skebby/logo.png" alt="Intro"><br/>
-		<a href="btn">GUARDA LA DEMO SMS DA WEB</a>
-
+		</div>
+	
 	</div>
-
-</div>
 
 </div>
