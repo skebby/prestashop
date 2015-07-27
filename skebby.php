@@ -1311,13 +1311,16 @@ class Skebby extends Module
 	    $helper->submit_action = 'exportOnlyBlockNews';
 	    $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
 	    $helper->token = Tools::getAdminTokenLite('AdminModules');
+
 	    $helper->tpl_vars = array(
-	        'fields_value' => $this->getConfigFieldsValues(),
+	        'fields_value' => array(),
 	        'languages' => $this->context->controller->getLanguages(),
 	        'id_language' => $this->context->language->id
 	    );
+
 	    return $helper->generateForm(array($fields_form));
 	}
+
 
 
 
