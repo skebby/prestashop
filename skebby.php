@@ -830,7 +830,7 @@ class Skebby extends Module
 				),
 				array(
 					'type' => 'free',
-					'label' => $this->l('Check the Credit'),
+					'label' => $this->l('Check the integration'),
 					'desc' => $this->display(__FILE__, 'views/templates/admin/scripts.tpl'),
 					'name' => 'FREE_TEXT',
 					'required' => false
