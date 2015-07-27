@@ -134,7 +134,7 @@
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
-			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">{l s='TRY OUR WEB INTERFACE.' mod='skebby'}</a>
+			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">{l s='TRY OUR WEB PANEL' mod='skebby'}</a>
 		
 	
 		</div>
