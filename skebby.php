@@ -900,14 +900,16 @@ class Skebby extends Module
 		$theform .= $this->display(__FILE__, 'views/templates/admin/tabs_start.tpl');
 
 
-		$theform .= '<div id="settings">';
+		$theform .= '<div class="tab-content">';
+		$theform .= '<div class="tab-pane active" id="settings">';
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
-		$theform .= '<div id="campaigns">';
+		$theform .= '<div class="tab-pane" id="campaigns">';
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
-		$theform .= '<div id="messages">';
+		$theform .= '<div class="tab-pane" id="messages">';
 		$theform .= $helper->generateForm($fields_form);
+		$theform .= '</div>';
 		$theform .= '</div>';
 
 		$theform .= $this->display(__FILE__, 'views/templates/admin/tabs_end.tpl');
