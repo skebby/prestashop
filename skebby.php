@@ -1337,6 +1337,19 @@ class Skebby extends Module
 // 	        $dbquery->where('n.`email` LIKE \'%'.pSQL($this->_searched_email).'%\' ');
 // 	    $non_customers = Db::getInstance()->executeS($dbquery->build());
 // 	    $subscribers = array_merge($customers, $non_customers);
+
+
+	    $allprefixes = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+	        '
+				SELECT `call_prefix`
+				FROM `'._DB_PREFIX_.'country`');
+
+		print_r($allprefixes);
+		exit();
+
+
+
+
 	    return $customers;
 	}
 
