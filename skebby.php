@@ -1260,6 +1260,8 @@ class Skebby extends Module
 	    $this->_helperlist = $helper_list;
 	    /* Retrieve list data */
 	    $customers = $this->getCustomers();
+	    print_r($customers);
+	    exit();
 	    $helper_list->listTotal = count($customers);
 	    /* Paginate the result */
 	    $page = ($page = Tools::getValue('submitFilter'.$helper_list->table)) ? $page : 1;
