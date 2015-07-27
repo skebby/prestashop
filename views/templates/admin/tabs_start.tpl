@@ -28,7 +28,7 @@
 	<ul class="nav nav-tabs nav-justified" role="tablist">
 	  <li role="presentation" class="active"><a href="#settings" role="tab" data-toggle="tab">{l s='Settings' mod='skebby'}</a></li>
 	  {*<li role="presentation"><a href="#customers" role="tab" data-toggle="tab">{l s='Campaigns' mod='skebby'}</a></li>*}
-	  <li role="presentation"><a href="#tutorials" role="tab" data-toggle="tab">{l s='Tutorials' mod='skebby'}</a></li>
+	  <li role="presentation"><a href="#tutorials" role="tab" data-toggle="tab">{l s='HOW-TO' mod='skebby'}</a></li>
 	</ul>
 </div>
 
