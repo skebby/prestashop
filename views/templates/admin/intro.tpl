@@ -26,7 +26,7 @@
 <img src="/modules/skebby/img/sms-gratis-business.png" />
 
 
-<div class="panel" id="fieldset_0">
+<div class="panel" id="fieldset_0" style="margin-top:20px;">
 												
 <div class="panel-heading">
 	<img src="/modules/skebby/logo.png" alt="Intro">{l s='How it works' mod='skebby'}
