@@ -1101,7 +1101,7 @@ class Skebby extends Module
 			        fwrite($fd, $line, 4096);
 			    }
 			    fclose($fd);
-			    Tools::redirect($this->context->link->getAdminLink('AdminModules', false).'modules/'.$this->name.'/'.$file_name);
+			    Tools::redirect(_PS_BASE_URL_.__PS_BASE_URI__.'/admin-dev/modules/'.$this->name.'/'.$file_name);
 		}else{
 			return $output.$this->displayForm();
 		}
