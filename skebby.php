@@ -1323,7 +1323,8 @@ class Skebby extends Module
 	    $helper->default_form_language = $lang->id;
 	    $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
 	    $helper->identifier = $this->identifier;
-	    $helper->submit_action = 'exportOnlyBlockNews';
+
+	    $helper->submit_action = 'exportCustomers';
 	    $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
 	    $helper->token = Tools::getAdminTokenLite('AdminModules');
 
