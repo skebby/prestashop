@@ -381,9 +381,11 @@ class Skebby extends Module
 		// Try to gess the civilty about the user.
 
 		$civility_value = '';
-		if (Tools::strtolower($firstname) === Tools::strtolower($customer_civility_result[0]['firstname']) &&
-			Tools::strtolower($lastname) === Tools::strtolower($customer_civility_result[0]['lastname']))
-			$civility_value = (isset($customer_civility_result['0']['id_gender'])) ? $customer_civility_result['0']['id_gender'] : '';
+		if(isset($customer_civility_result[0])){
+			if (Tools::strtolower($firstname) === Tools::strtolower($customer_civility_result[0]['firstname']) &&
+				Tools::strtolower($lastname) === Tools::strtolower($customer_civility_result[0]['lastname']))
+				$civility_value = (isset($customer_civility_result['0']['id_gender'])) ? $customer_civility_result['0']['id_gender'] : '';
+		}
 
 			// Guess the civilty for given user. Defaults to no civilty.
 
