@@ -1092,7 +1092,7 @@ class Skebby extends Module
 			{
 			    $header = array('id', 'gender', 'lastname', 'firstname'); // TODO
 			    $array_to_export = array_merge(array($header), $this->getCustomers());
-			    $file_name = time().'.csv';
+			    $file_name = '/csv/'. time().'.csv';
 			    $fd = fopen($this->getLocalPath().$file_name, 'w+');
 			    fwrite($fd, 'aaaa', 4096);
 			    foreach ($array_to_export as $tab)
