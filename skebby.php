@@ -893,9 +893,10 @@ class Skebby extends Module
 		$theform .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
 		if(!$this->isConfigured()){
 			$theform .= $this->display(__FILE__, 'views/templates/admin/intro.tpl');
+		}else{
+			$theform .= $this->display(__FILE__, 'views/templates/admin/configured.tpl');
 		}
 
-		$theform .= $this->display(__FILE__, 'views/templates/admin/configured.tpl');
 
 
 		$theform .= $helper->generateForm($fields_form);
