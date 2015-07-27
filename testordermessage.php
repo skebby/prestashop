@@ -32,6 +32,9 @@ header('Content-Type: application/json');
 if (Tools::getValue('token') != Tools::encrypt(Configuration::get('PS_SHOP_NAME')))
 	die('Error: Invalid Token');
 
+
+$date=date_create();
+
 $skebby_module = new Skebby();
 
 $params = array();
@@ -40,10 +43,10 @@ $params['civility'] = 'Mr.';
 $params['first_name'] = 'Matteo';
 $params['last_name'] = 'Monti';
 $params['order_price'] = 'EUR 10.15';
-$params['order_date'] = '2015-01-09 14:16:47';
+$params['order_date'] = date_format($date,'Y-m-d H:i:s');
 $params['order_reference'] = 'ABCDEFGHI';
 
 $params['currency'] = '€';
 $params['total_to_pay'] = '100.0000';
 
-echo Tools::jsonEncode($skebby_module->hookOrderConfirmation($params));
+echo Tools::jsonEncode($skebby_module->doOrderConfirmation($params));

@@ -448,20 +448,35 @@ class Skebby extends Module
 	 */
 	public function hookOrderConfirmation($params)
 	{
+
 		if (!$this->checkModuleStatus())
 		{
-			$this->logMessage('Skebby module not enabled');
-			return false;
+		    $this->logMessage('Skebby module not enabled');
+		    return false;
 		}
 
 		// If the user didn't opted for New Order notifications. Exit.
 		if (!$this->shouldNotifyUponNewOrder())
 		{
-			$this->logMessage('Used did not opted in for New Order notification');
-			return false;
+		    $this->logMessage('Used did not opted in for New Order notification');
+		    return false;
 		}
 
 		$params = $this->getParamsFromOrder();
+
+		return $this->doOrderConfirmation($params);
+	}
+
+
+
+	/**
+	 * When a user places an order, the tracking code integrates in the order confirmation page.
+	 *
+	 * @param unknown $params
+	 * @return boolean
+	 */
+	public function doOrderConfirmation($params)
+	{
 
 		if (!$params)
 		{
