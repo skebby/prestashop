@@ -89,6 +89,10 @@
 	margin-top:30px;
 }
 
+.mt50 {
+	margin-top:50px;
+}
+
 </style>
 <div class="panel" id="fieldset_0">
 	<div class="row">
@@ -100,7 +104,7 @@
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
 	
-			<div class="text-center mt30">
+			<div class="text-center mt50">
 				<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">PROVA GRATIS<br/>100 SMS omaggio</a>
 			</div>
 			
