@@ -23,9 +23,11 @@
 * International Registered Trademark & Property of PrestaShop SA
 *}
 <div class="mt30">
-<ul class="nav nav-pills mb30">
-  <li role="presentation" class="active"><a href="#">Home</a></li>
-  <li role="presentation"><a href="#">Profile</a></li>
-  <li role="presentation"><a href="#">Messages</a></li>
-</ul>
 
+<div class="mb30">
+	<ul class="nav nav-pills">
+	  <li role="presentation" class="active"><a href="#">Home</a></li>
+	  <li role="presentation"><a href="#">Profile</a></li>
+	  <li role="presentation"><a href="#">Messages</a></li>
+	</ul>
+</div>
