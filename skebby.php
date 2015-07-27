@@ -1344,7 +1344,15 @@ class Skebby extends Module
 				SELECT `call_prefix`,`id_country`
 				FROM `'._DB_PREFIX_.'country`');
 
-		print_r($allprefixes);
+
+
+		$hash = array();
+		foreach ($allprefixes as $prefix){
+			$hash[$prefix['id_country']] = $prefix['call_prefix'];
+		}
+
+
+		print_r($hash);
 		exit();
 
 
