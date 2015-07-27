@@ -84,13 +84,10 @@
 	height:90%;
 }
 
-.bubble a {
-  display: table-cell; 
-  vertical-align: middle; 
-  text-align: center; 
+
+.mt30 {
+	margin-top:30px;
 }
-
-
 
 </style>
 <div class="panel" id="fieldset_0">
@@ -103,7 +100,7 @@
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
 	
-			<div class="text-center bubble">
+			<div class="text-center mt30">
 				<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">PROVA GRATIS<br/>100 SMS omaggio</a>
 			</div>
 			
