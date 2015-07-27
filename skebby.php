@@ -897,6 +897,7 @@ class Skebby extends Module
 			$theform .= $this->display(__FILE__, 'views/templates/admin/configured.tpl');
 		}
 
+		$theform .= $this->display(__FILE__, 'views/templates/admin/tabs.tpl');
 
 
 		$theform .= $helper->generateForm($fields_form);
