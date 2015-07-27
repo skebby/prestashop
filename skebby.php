@@ -1194,6 +1194,7 @@ class Skebby extends Module
 	        'id' => array(
 	            'title' => $this->l('ID'),
 	            'search' => false,
+	            'type' => 'bool',
 	            'active' => 'id',
 	        ),
 	        'shop_name' => array(
@@ -1222,8 +1223,6 @@ class Skebby extends Module
 	        ),
 	        'subscribed' => array(
 	            'title' => $this->l('Subscribed'),
-	            'type' => 'bool',
-	            'active' => 'subscribed',
 	            'search' => false,
 	        ),
 	        'newsletter_date_add' => array(
