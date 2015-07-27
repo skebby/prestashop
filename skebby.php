@@ -1094,9 +1094,9 @@ class Skebby extends Module
 			    $array_to_export = array_merge(array($header), $this->getCustomers());
 			    $file_name = time().'.csv';
 			    $fd = fopen($this->getLocalPath().$file_name, 'w+');
+			    fwrite($fd, 'aaaa', 4096);
 			    foreach ($array_to_export as $tab)
 			    {
-			    	fwrite($fd, 'aaaa', 4096);
 			        $line = implode(';', $tab);
 			        $line .= "\n";
 			        fwrite($fd, $line, 4096);
