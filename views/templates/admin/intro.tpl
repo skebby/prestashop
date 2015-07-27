@@ -28,7 +28,7 @@
 
 	<div class="row">
 		<div class="col-md-8">
-			<h3>LOREM IPSUM</h3>
+			<h4>LOREM IPSUM</h4>
 			<ul>
 				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
 				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
@@ -50,7 +50,7 @@
 
 	<div class="row">
 		<div class="col-md-8">
-			<h3>LOREM IPSUM SIT AMET DOLOR SCHIENUS QUE</h3>
+			<h4>LOREM IPSUM SIT AMET DOLOR SCHIENUS QUE</h4>
 			<ul>
 				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
 				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
