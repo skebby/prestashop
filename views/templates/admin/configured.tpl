@@ -26,7 +26,7 @@
 	<div class="row">
 		<div class="col-md-6">
 			<h4>{l s='PROMOTIONAL CAMPAIGNS THROUGH OUR WEB PANEL' mod='skebby'}</h4>
-			<p>{l s='With Skebby you can send bulk campaigns' mod='skebby'}</p>
+			<p>{l s='With Skebby you can also send bulk campaigns' mod='skebby'}</p>
 			<ul>
 				<li>{l s='Reach anyone, everywhere in real time' mod='skebby'}</li>
 				<li>{l s='Adquire, interact and build loyalty with your customers' mod='skebby'}</li>
