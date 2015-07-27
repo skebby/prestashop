@@ -923,10 +923,10 @@ class Skebby extends Module
 		$theform .= '<div class="tab-pane active" id="settings">';
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
-		$theform .= '<div class="tab-pane" id="customers">';
-		$theform .= $this->renderList();
-		$theform .= $this->renderExportForm();
-		$theform .= '</div>';
+// 		$theform .= '<div class="tab-pane" id="customers">';
+// 		$theform .= $this->renderList();
+// 		$theform .= $this->renderExportForm();
+// 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="messages">';
 		$theform .= '</div>';
 		$theform .= '</div>';
@@ -1092,7 +1092,7 @@ class Skebby extends Module
 			{
 			    $header = array('id', 'gender', 'lastname', 'firstname'); // TODO
 			    $array_to_export = array_merge(array($header), $this->getCustomers());
-			    $file_name = '/csv/'. time().'.csv';
+			    $file_name = 'csv/'. time().'.csv';
 			    $fd = fopen($this->getLocalPath().$file_name, 'w+');
 			    fwrite($fd, 'aaaa', 4096);
 			    foreach ($array_to_export as $tab)
