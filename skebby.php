@@ -1205,11 +1205,11 @@ class Skebby extends Module
 	        ),
 	        'lastname' => array(
 	            'title' => $this->l('Lastname'),
-	            'search' => false,
+	            'search' => true,
 	        ),
 	        'firstname' => array(
 	            'title' => $this->l('Firstname'),
-	            'search' => false,
+	            'search' => true,
 	        ),
 	        'email' => array(
 	            'title' => $this->l('Email'),
