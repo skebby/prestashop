@@ -37,7 +37,7 @@
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
-			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">{l s='GO TO YOUR WEB PANEL' mod='skebby'}</a>
+			<a target="_blank" href="http://smsmessenger.skebby.it" id="A_1">{l s='GO TO YOUR WEB PANEL' mod='skebby'}</a>
 		
 	
 		</div>
