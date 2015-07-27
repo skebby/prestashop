@@ -1326,24 +1326,9 @@ class Skebby extends Module
 	    $dbquery->leftJoin('address', 'a', 'a.id_customer = c.id_customer');
 	    $dbquery->leftJoin('country', 'p', 'p.id_country = a.id_country');
 	    $dbquery->leftJoin('gender_lang', 'gl', 'g.id_gender = gl.id_gender AND gl.id_lang = '.(int)$this->context->employee->id_lang);
-// 	    $dbquery->where('c.`newsletter` = 1');
-// 	    if ($this->_searched_email)
-// 	        $dbquery->where('c.`email` LIKE \'%'.pSQL($this->_searched_email).'%\' ');
+
+		//
 	    $customers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($dbquery->build());
-// 	    $dbquery = new DbQuery();
-// 	    $dbquery->select('CONCAT(\'N\', n.`id`) AS `id`, s.`name` AS `shop_name`, NULL AS `gender`, NULL AS `lastname`, NULL AS `firstname`, n.`email`, n.`active` AS `subscribed`, n.`newsletter_date_add`');
-// 	    $dbquery->from('newsletter', 'n');
-// 	    $dbquery->leftJoin('shop', 's', 's.id_shop = n.id_shop');
-// 	    $dbquery->where('n.`active` = 1');
-// 	    if ($this->_searched_email)
-// 	        $dbquery->where('n.`email` LIKE \'%'.pSQL($this->_searched_email).'%\' ');
-// 	    $non_customers = Db::getInstance()->executeS($dbquery->build());
-// 	    $subscribers = array_merge($customers, $non_customers);
-
-
-
-
-
 
 	    return $customers;
 	}
