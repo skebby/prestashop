@@ -24,9 +24,7 @@
 *}
 <div class="panel" id="fieldset_0">
 												
-	<div class="panel-heading">
-		<img src="/modules/skebby/logo.png" alt="Intro">{l s='How it works' mod='skebby'}
-	</div>
+
 
 	<div class="row">
 		<div class="col-md-8">
@@ -48,9 +46,7 @@
 
 <div class="panel" id="fieldset_0">
 
-	<div class="panel-heading">
-		<img src="/modules/skebby/logo.png" alt="Intro">{l s='How it works' mod='skebby'}
-	</div>
+
 
 	<div class="row">
 		<div class="col-md-8">
