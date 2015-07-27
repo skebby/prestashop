@@ -837,8 +837,8 @@ class Skebby extends Module
 				)
 			),
 			'submit' => array(
-				'title' => $this->l('Save'),
-				'class' => 'button'
+				'title' => $this->l('Save settings'),
+				'class' => 'button text-center'
 			)
 		);
 
