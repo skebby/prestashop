@@ -23,7 +23,7 @@
 * International Registered Trademark & Property of PrestaShop SA
 *}
 
-<img src="/modules/skebby/logo.png" />
+<img src="/modules/skebby/img/sms-gratis-business.png" />
 
 
 <div class="panel" id="fieldset_0">
