@@ -97,15 +97,16 @@
 <div class="panel" id="fieldset_0">
 	<div class="row">
 		<div class="col-md-6">
-			<h4>LOREM IPSUM</h4>
+			<h4>{l s='SKEBBY SMS' mod='skebby'}</h4>
+			<p>{l s='With Skebby module you will easily integrate your Prestashop site to send transactional SMS notifications to' mod='skebby'}</p>
 			<ul>
-				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
-				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
+				<li>{l s='Receive order confirmations.' mod='skebby'}</li>
+				<li>{l s='Notify customers when their orders are shipped. ' mod='skebby'}</li>
 			</ul>
-			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
+			<p>{l s='Register now and try this module for free.' mod='skebby'}</p>
 	
 			<div class="text-center mt50">
-				<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">PROVA GRATIS<br/>100 SMS omaggio</a>
+				<a target="_blank" href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">{l s='FREE TRIAL.' mod='skebby'}<br/>{l s='get 100 free SMS' mod='skebby'}</a>
 			</div>
 			
 		</div>
@@ -121,10 +122,11 @@
 <div class="panel" id="fieldset_0">
 	<div class="row">
 		<div class="col-md-6">
-			<h4>LOREM IPSUM SIT AMET DOLOR SCHIENUS QUE</h4>
+			<h4>{l s='Promotional campaigns via web panel' mod='skebby'}</h4>
+			<p>{l s='With Skebby you can send bulk campaign..' mod='skebby'}</p>
 			<ul>
-				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
-				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
+				<li>{l s='Reach anyone, everywhere in real time' mod='skebby'}</li>
+				<li>{l s='Adquire and interact with your customers. ' mod='skebby'}</li>
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
 		</div>
