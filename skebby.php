@@ -1271,6 +1271,20 @@ class Skebby extends Module
 	    return $helper_list->generateList($customers, $fields_list);
 	}
 
+
+	public function displayViewCustomerLink($token = null, $id, $name = null)
+	{
+	    $this->smarty->assign(array(
+	        'href' => 'index.php?controller=AdminCustomers&id_customer='.(int)$id.'&sync&token='.Tools::getAdminTokenLite('AdminCustomers'),
+	        'action' => $this->l('View'),
+	        'disable' => !((int)$id > 0),
+	    ));
+	    return $this->display(__FILE__, 'views/templates/admin/sync.tpl');
+	}
+
+
+
+
 	public function paginateSubscribers($subscribers, $page = 1, $pagination = 50)
 	{
 	    if(count($subscribers) > $pagination)
