@@ -80,8 +80,8 @@
 	position:absolute;
 	top:0;
 	left:0;
-	width:70%;
-	height:70%;
+	width:90%;
+	height:90%;
 }
 
 
