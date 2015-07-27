@@ -1341,7 +1341,7 @@ class Skebby extends Module
 
 	    $allprefixes = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
 	        '
-				SELECT `call_prefix`
+				SELECT *
 				FROM `'._DB_PREFIX_.'country`');
 
 		print_r($allprefixes);
