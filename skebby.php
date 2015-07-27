@@ -1215,6 +1215,10 @@ class Skebby extends Module
 	            'title' => $this->l('Email'),
 	            'search' => false,
 	        ),
+	        'mobile' => array(
+	            'title' => $this->l('Mobile'),
+	            'search' => true,
+	        ),
 	        'subscribed' => array(
 	            'title' => $this->l('Subscribed'),
 	            'type' => 'bool',
