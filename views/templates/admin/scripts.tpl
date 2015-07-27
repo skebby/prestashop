@@ -25,9 +25,9 @@
 
 <div class="text-center">
 	<div class="btn-group">
-		<button type="button" id="credit_btn" class="btn btn-default ">{l s='CHECK REMAINING CREDIT' mod='skebby'}</button>
-		<button type="button" id="test_btn" class="btn btn-default ">{l s='TEST NEW ORDER SMS' mod='skebby'}</button>
-		<button type="button" id="testshipment_btn" class="btn btn-default ">{l s='TEST ORDER SHIPMENT SMS' mod='skebby'}</button>
+		<button type="button" id="credit_btn" class="btn btn-warning ">{l s='CHECK REMAINING CREDIT' mod='skebby'}</button>
+		<button type="button" id="test_btn" class="btn btn-warning ">{l s='TEST NEW ORDER SMS' mod='skebby'}</button>
+		<button type="button" id="testshipment_btn" class="btn btn-warning ">{l s='TEST ORDER SHIPMENT SMS' mod='skebby'}</button>
 	</div>
 	<br/>
 	<br/>
