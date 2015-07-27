@@ -1084,6 +1084,10 @@ class Skebby extends Module
 			$this->logMessage('Updated config Values');
 
 			$this->dumpConfig();
+
+			return $output.$this->displayForm();
+
+
 		}elseif (Tools::isSubmit('exportCustomers'))
 			{
 			    $header = array('id', 'gender', 'lastname', 'firstname'); // TODO
@@ -1100,7 +1104,7 @@ class Skebby extends Module
 			    Tools::redirect(_PS_BASE_URL_.__PS_BASE_URI__.'modules/'.$this->name.'/'.$file_name);
 		}
 
-		return $output.$this->displayForm();
+
 	}
 
 	/**
