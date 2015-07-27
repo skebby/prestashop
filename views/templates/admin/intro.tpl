@@ -84,6 +84,12 @@
 	height:90%;
 }
 
+.bubble a {
+  display: table-cell; 
+  vertical-align: middle; 
+  text-align: center; 
+}
+
 
 
 </style>
@@ -97,7 +103,7 @@
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
 	
-			<div class="text-center">
+			<div class="text-center bubble">
 				<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">PROVA GRATIS<br/>100 SMS omaggio</a>
 			</div>
 			
