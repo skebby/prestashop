@@ -1264,6 +1264,12 @@ class Skebby extends Module
 	    return $helper_list->generateList($subscribers, $fields_list);
 	}
 
+	public function paginateSubscribers($subscribers, $page = 1, $pagination = 50)
+	{
+	    if(count($subscribers) > $pagination)
+	        $subscribers = array_slice($subscribers, $pagination * ($page - 1), $pagination);
+	    return $subscribers;
+	}
 
 	public function renderSearchForm()
 	{
