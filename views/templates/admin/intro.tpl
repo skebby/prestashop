@@ -96,7 +96,7 @@
 
 <div class="panel" id="fieldset_0">
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-md-7">
 			<h4>LOREM IPSUM SIT AMET DOLOR SCHIENUS QUE</h4>
 			<ul>
 				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
@@ -104,7 +104,7 @@
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-5">
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
