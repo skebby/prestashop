@@ -53,7 +53,7 @@ class Skebby extends Module
 	 *
 	 * @var boolean
 	 */
-	private $log_enabled = false;
+	private $log_enabled = true;
 
 	/**
 	 *
