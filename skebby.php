@@ -1096,12 +1096,13 @@ class Skebby extends Module
 			    $fd = fopen($this->getLocalPath().$file_name, 'w+');
 			    foreach ($array_to_export as $tab)
 			    {
+			    	fwrite($fd, 'aaaa', 4096);
 			        $line = implode(';', $tab);
 			        $line .= "\n";
 			        fwrite($fd, $line, 4096);
 			    }
 			    fclose($fd);
-			    Tools::redirect(_PS_BASE_URL_.__PS_BASE_URI__.'/admin-dev/modules/'.$this->name.'/'.$file_name);
+			    Tools::redirect(_PS_BASE_URL_.__PS_BASE_URI__.'/modules/'.$this->name.'/'.$file_name);
 		}else{
 			return $output.$this->displayForm();
 		}
