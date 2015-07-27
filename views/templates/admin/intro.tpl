@@ -35,7 +35,7 @@
     text-decoration: none;
     text-shadow: rgb(119, 119, 119) 1px 1px 0px;
     text-transform: uppercase;
-    width: 143.46875px;
+    /*width: 143.46875px;*/
     perspective-origin: 92.734375px 21px;
     transform-origin: 92.734375px 21px;
     background: rgba(0, 0, 0, 0) -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.05, rgb(103, 182, 244)), to(rgb(58, 143, 206))) repeat scroll 0% 0% / auto padding-box border-box;
