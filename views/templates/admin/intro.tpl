@@ -22,6 +22,45 @@
 * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 * International Registered Trademark & Property of PrestaShop SA
 *}
+<style>
+
+#A_1 {
+    box-shadow: rgb(161, 223, 250) 0px 1px 0px 0px inset;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    display: inline-block;
+    height: 30px;
+    letter-spacing: 0.300000011920929px;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: rgb(119, 119, 119) 1px 1px 0px;
+    text-transform: uppercase;
+    width: 143.46875px;
+    perspective-origin: 92.734375px 21px;
+    transform-origin: 92.734375px 21px;
+    background: rgba(0, 0, 0, 0) -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.05, rgb(103, 182, 244)), to(rgb(58, 143, 206))) repeat scroll 0% 0% / auto padding-box border-box;
+    border: 1px solid rgb(80, 143, 205);
+    border-radius: 3px 3px 3px 3px;
+    font: normal normal bold normal 15px/15px arial;
+    margin: 21px 0px 0px;
+    outline: rgb(255, 255, 255) none 0px;
+    padding: 5px 20px;
+    transition: all 0.1s ease 0s;
+}
+
+#BR_2 {
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    letter-spacing: 0.300000011920929px;
+    text-align: center;
+    text-shadow: rgb(119, 119, 119) 1px 1px 0px;
+    text-transform: uppercase;
+    border: 0px none rgb(255, 255, 255);
+    font: normal normal bold normal 15px/15px arial;
+    outline: rgb(255, 255, 255) none 0px;
+}
+
+</style>
 <div class="panel" id="fieldset_0">
 	<div class="row">
 		<div class="col-md-8">
@@ -54,10 +93,16 @@
 		<div class="col-md-4">
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
-			<a href="btn btn-primary ">GUARDA LA DEMO SMS DA WEB</a>
+			
+			<a href="http://www.skebby.it/business/index/demo-web/" id="A_1">Guarda la demo<br id="BR_2" />SMS da web</a>
+		
 	
 		</div>
 	
 	</div>
 
 </div>
+
+
+
+
