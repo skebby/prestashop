@@ -55,6 +55,7 @@
     color: rgb(255, 255, 255);
     cursor: pointer;
     display: inline-block;
+    width : 250px;
     text-align: center;
     text-decoration: none;
     text-shadow: rgb(119, 119, 119) 1px 1px 0px;
