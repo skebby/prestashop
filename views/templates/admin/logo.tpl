@@ -85,6 +85,10 @@
 }
 
 
+.mb30 {
+	margin-bottom:30px;
+}
+
 .mt30 {
 	margin-top:30px;
 }
