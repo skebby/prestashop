@@ -1231,14 +1231,14 @@ class Skebby extends Module
 	        unset($fields_list['shop_name']);
 	    $helper_list = New HelperList();
 	    $helper_list->module = $this;
-	    $helper_list->title = $this->l('Customers');
+	    $helper_list->title = $this->l('Registered Customers');
 	    $helper_list->shopLinkType = '';
 	    $helper_list->no_link = true;
 	    $helper_list->show_toolbar = true;
 	    $helper_list->simple_header = false;
 	    $helper_list->identifier = 'id';
 	    $helper_list->table = 'merged';
-	    $helper_list->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
+	    $helper_list->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name .'#customers';
 	    $helper_list->token = Tools::getAdminTokenLite('AdminModules');
 	    $helper_list->actions = array('viewCustomer');
 	   /* $helper_list->toolbar_btn['export'] = array(
