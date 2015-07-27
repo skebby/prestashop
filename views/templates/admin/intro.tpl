@@ -54,8 +54,9 @@
     box-shadow: rgb(251, 175, 93) 0px 1px 0px 0px inset;
     color: rgb(255, 255, 255);
     cursor: pointer;
-    display: block;
-    text-align: left;
+    display: inline-block;
+    height: 30px;
+    text-align: center;
     text-decoration: none;
     text-shadow: rgb(119, 119, 119) 1px 1px 0px;
     text-transform: uppercase;
