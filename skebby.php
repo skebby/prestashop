@@ -1084,6 +1084,20 @@ class Skebby extends Module
 			$this->logMessage('Updated config Values');
 
 			$this->dumpConfig();
+		}elseif (Tools::isSubmit('exportCustomers'))
+			{
+			    $header = array('id', 'gender', 'lastname', 'firstname'); // TODO
+			    $array_to_export = array_merge(array($header), $this->getCustomers());
+			    $file_name = time().'.csv';
+			    $fd = fopen($this->getLocalPath().$file_name, 'w+');
+			    foreach ($array_to_export as $tab)
+			    {
+			        $line = implode(';', $tab);
+			        $line .= "\n";
+			        fwrite($fd, $line, 4096);
+			    }
+			    fclose($fd);
+			    Tools::redirect(_PS_BASE_URL_.__PS_BASE_URI__.'modules/'.$this->name.'/'.$file_name);
 		}
 
 		return $output.$this->displayForm();
@@ -1289,11 +1303,10 @@ class Skebby extends Module
 	    $fields_form = array(
 	        'form' => array(
 	            'legend' => array(
-	                'title' => $this->l('Export Newsletter Subscribers'),
-	                'icon' => 'icon-envelope'
+	                'title' => $this->l('Export customers')
 	            ),
 	            'desc' => array(
-	                array('text' => $this->l('Generate a .CSV file based on BlockNewsletter subscribers data. Only subscribers without an account on the shop will be exported.'))
+	                array('text' => $this->l('Generate a .CSV file with customer details'))
 	            ),
 	            'submit' => array(
 	                'title' => $this->l('Export .CSV file'),
@@ -1302,6 +1315,8 @@ class Skebby extends Module
 	            )
 	        ),
 	    );
+
+
 	    $helper = new HelperForm();
 	    $helper->table = $this->table;
 	    $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
