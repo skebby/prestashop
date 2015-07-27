@@ -891,6 +891,7 @@ class Skebby extends Module
 
 		$this->context->smarty->assign($data);
 
+		$theform .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
 		if(!$this->isConfigured()){
 			$theform .= $this->display(__FILE__, 'views/templates/admin/configured.tpl');
 		}else{
