@@ -924,7 +924,6 @@ class Skebby extends Module
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="customers">';
-		$theform .= $this->renderSearchForm();
 		$theform .= $this->renderList();
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="messages">';
@@ -1277,43 +1276,6 @@ class Skebby extends Module
 	    if(count($subscribers) > $pagination)
 	        $subscribers = array_slice($subscribers, $pagination * ($page - 1), $pagination);
 	    return $subscribers;
-	}
-
-	public function renderSearchForm()
-	{
-	    $fields_form = array(
-	        'form' => array(
-	            'legend' => array(
-	                'title' => $this->l('Search for addresses'),
-	                'icon' => 'icon-search'
-	            ),
-	            'input' => array(
-	                array(
-	                    'type' => 'text',
-	                    'label' => $this->l('Email address to search'),
-	                    'name' => 'searched_email',
-	                    'class' => 'fixed-width-xxl',
-	                    'desc' => $this->l('Example: contact@prestashop.com or @prestashop.com')
-	                ),
-	            ),
-	            'submit' => array(
-	                'title' => $this->l('Search'),
-	                'icon' => 'process-icon-refresh',
-	            )
-	        ),
-	    );
-	    $helper = new HelperForm();
-	    $helper->table = $this->table;
-	    $helper->identifier = $this->identifier;
-	    $helper->submit_action = 'searchEmail';
-	    $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&module_name='.$this->name;
-	    $helper->token = Tools::getAdminTokenLite('AdminModules');
-	    $helper->tpl_vars = array(
-	        'fields_value' => array('searched_email' => $this->_searched_email),
-	        'languages' => $this->context->controller->getLanguages(),
-	        'id_language' => $this->context->language->id
-	    );
-	    return $helper->generateForm(array($fields_form));
 	}
 
 
