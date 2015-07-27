@@ -23,9 +23,6 @@
 * International Registered Trademark & Property of PrestaShop SA
 *}
 <div class="panel" id="fieldset_0">
-												
-
-
 	<div class="row">
 		<div class="col-md-8">
 			<h4>LOREM IPSUM</h4>
@@ -45,9 +42,6 @@
 </div>
 
 <div class="panel" id="fieldset_0">
-
-
-
 	<div class="row">
 		<div class="col-md-8">
 			<h4>LOREM IPSUM SIT AMET DOLOR SCHIENUS QUE</h4>

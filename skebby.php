@@ -692,8 +692,7 @@ class Skebby extends Module
 		// Configuration Form
 		$fields_form[0]['form'] = array(
 			'legend' => array(
-				'title' => $this->l('Settings'),
-				'image' => '/modules/skebby/logo.png'
+				'title' => $this->l('Settings')
 			),
 			'input' => array(
 				array(
