@@ -55,23 +55,17 @@
     color: rgb(255, 255, 255);
     cursor: pointer;
     display: block;
-    float: right;
-    height: 17px;
     text-align: left;
     text-decoration: none;
     text-shadow: rgb(119, 119, 119) 1px 1px 0px;
     text-transform: uppercase;
-    perspective-origin: 152.6875px 14.5px;
-    transform-origin: 152.6875px 14.5px;
     background: rgba(0, 0, 0, 0) -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.05, rgb(255, 143, 0)), to(rgb(255, 107, 0))) repeat scroll 0% 0% / auto padding-box border-box;
     border: 1px solid rgb(242, 101, 34);
     border-radius: 3px 3px 3px 3px;
     font: normal normal bold normal 15px/normal arial;
-    margin: 0px 0px 0px 30px;
     outline: rgb(255, 255, 255) none 0px;
     padding: 5px 20px;
-    transition: all 0.1s ease 0s;
-}/*#A_1*/
+}
 
 
 
