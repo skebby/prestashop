@@ -418,7 +418,9 @@ class Skebby extends Module
 
 		// the order amount and currency.
 		$order_price = (isset($order->total_paid)) ? $order->total_paid : 0;
-		$order_price = $this->context->currency->iso_code.' '.$order_price;
+		if(isset($this->context->currency->iso_code)){
+			$order_price = $this->context->currency->iso_code.' '.$order_price;
+		}
 
 		if (_PS_VERSION_ < '1.5.0.0')
 			$order_reference = (isset($order->id)) ? $order->id : '';
