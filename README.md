@@ -21,3 +21,7 @@ Select the "Skebby.zip" file using the browse button from the "Module file" sect
 
 Step 5)
 Go to modules tab, find Skebby module and click the 'configure' link.
+
+
+
+
