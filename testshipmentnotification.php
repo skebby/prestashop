@@ -43,7 +43,7 @@ $params['civility'] = 'Mr.';
 $params['first_name'] = 'John';
 $params['last_name'] = 'Wayne';
 $params['order_price'] = 'EUR 10.15';
-$params['order_date'] = date_format($date,"Y-m-d H:i:s");
+$params['order_date'] = date_format($date,'Y-m-d H:i:s');
 $params['order_reference'] = 'ABCDEFGHI';
 
 echo Tools::jsonEncode($skebby_module->sendMessageForOrder($params, 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE'));
