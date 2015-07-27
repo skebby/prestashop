@@ -1340,23 +1340,6 @@ class Skebby extends Module
 // 	    $subscribers = array_merge($customers, $non_customers);
 
 
-// 	    $allprefixes = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
-// 	        '
-// 				SELECT `call_prefix`,`id_country`
-// 				FROM `'._DB_PREFIX_.'country`');
-
-
-
-// 		$hash = array();
-// 		foreach ($allprefixes as $prefix){
-// 			$hash[$prefix['id_country']] = $prefix['call_prefix'];
-// 		}
-
-
-// 		foreach ($customers as $customer)
-
-		print_r($customers);
-		exit();
 
 
 
