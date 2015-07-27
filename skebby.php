@@ -1241,7 +1241,7 @@ class Skebby extends Module
 	    $helper_list->show_toolbar = true;
 	    $helper_list->simple_header = false;
 	    $helper_list->identifier = 'id';
-	    $helper_list->table = 'merged';
+	    $helper_list->table = 'campaigns';
 	    $helper_list->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
 	    $helper_list->token = Tools::getAdminTokenLite('AdminModules');
 	    $helper_list->actions = array('viewCustomer');
