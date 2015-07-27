@@ -448,20 +448,6 @@ class Skebby extends Module
 	 */
 	public function hookOrderConfirmation($params)
 	{
-
-		if (!$this->checkModuleStatus())
-		{
-		    $this->logMessage('Skebby module not enabled');
-		    return false;
-		}
-
-		// If the user didn't opted for New Order notifications. Exit.
-		if (!$this->shouldNotifyUponNewOrder())
-		{
-		    $this->logMessage('Used did not opted in for New Order notification');
-		    return false;
-		}
-
 		$params = $this->getParamsFromOrder();
 
 		return $this->doOrderConfirmation($params);
@@ -477,6 +463,18 @@ class Skebby extends Module
 	 */
 	public function doOrderConfirmation($params)
 	{
+		if (!$this->checkModuleStatus())
+		{
+		    $this->logMessage('Skebby module not enabled');
+		    return false;
+		}
+
+		// If the user didn't opted for New Order notifications. Exit.
+		if (!$this->shouldNotifyUponNewOrder())
+		{
+		    $this->logMessage('Used did not opted in for New Order notification');
+		    return false;
+		}
 
 		if (!$params)
 		{
