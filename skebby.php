@@ -925,9 +925,9 @@ class Skebby extends Module
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="customers">';
 		$theform .= $this->renderList();
+		$theform .= $this->renderExportForm();
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="messages">';
-		$theform .= 'messages';
 		$theform .= '</div>';
 		$theform .= '</div>';
 
@@ -1280,6 +1280,43 @@ class Skebby extends Module
 	        'disable' => !((int)$id > 0),
 	    ));
 	    return $this->display(__FILE__, 'views/templates/admin/sync.tpl');
+	}
+
+
+
+	public function renderExportForm()
+	{
+	    $fields_form = array(
+	        'form' => array(
+	            'legend' => array(
+	                'title' => $this->l('Export Newsletter Subscribers'),
+	                'icon' => 'icon-envelope'
+	            ),
+	            'desc' => array(
+	                array('text' => $this->l('Generate a .CSV file based on BlockNewsletter subscribers data. Only subscribers without an account on the shop will be exported.'))
+	            ),
+	            'submit' => array(
+	                'title' => $this->l('Export .CSV file'),
+	                'class' => 'btn btn-default pull-right',
+	                'name' => 'submitExportmodule',
+	            )
+	        ),
+	    );
+	    $helper = new HelperForm();
+	    $helper->table = $this->table;
+	    $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+	    $helper->default_form_language = $lang->id;
+	    $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+	    $helper->identifier = $this->identifier;
+	    $helper->submit_action = 'exportOnlyBlockNews';
+	    $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+	    $helper->token = Tools::getAdminTokenLite('AdminModules');
+	    $helper->tpl_vars = array(
+	        'fields_value' => $this->getConfigFieldsValues(),
+	        'languages' => $this->context->controller->getLanguages(),
+	        'id_language' => $this->context->language->id
+	    );
+	    return $helper->generateForm(array($fields_form));
 	}
 
 
