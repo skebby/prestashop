@@ -1318,10 +1318,12 @@ class Skebby extends Module
 	public function getCustomers()
 	{
 	    $dbquery = new DbQuery();
-	    $dbquery->select('c.`id_customer` AS `id`, s.`name` AS `shop_name`, gl.`name` AS `gender`, c.`lastname`, c.`firstname`, c.`email`, c.`newsletter` AS `subscribed`, c.`newsletter_date_add`');
+	    $dbquery->select('c.`id_customer` AS `id`, a.`customer_mobile` AS `customer_mobile`, s.`name` AS `shop_name`, gl.`name` AS `gender`, c.`lastname`, c.`firstname`, c.`email`, c.`newsletter` AS `subscribed`, c.`newsletter_date_add`');
 	    $dbquery->from('customer', 'c');
 	    $dbquery->leftJoin('shop', 's', 's.id_shop = c.id_shop');
+	    $dbquery->leftJoin('shop', 's', 's.id_shop = c.id_shop');
 	    $dbquery->leftJoin('gender', 'g', 'g.id_gender = c.id_gender');
+	    $dbquery->leftJoin('address', 'a', 'a.id_customer = c.id_customer');
 	    $dbquery->leftJoin('gender_lang', 'gl', 'g.id_gender = gl.id_gender AND gl.id_lang = '.(int)$this->context->employee->id_lang);
 // 	    $dbquery->where('c.`newsletter` = 1');
 // 	    if ($this->_searched_email)
