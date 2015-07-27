@@ -103,7 +103,7 @@
 				<li>{l s='Receive order confirmations.' mod='skebby'}</li>
 				<li>{l s='Notify customers when their orders are shipped. ' mod='skebby'}</li>
 			</ul>
-			<p>{l s='Register now and try this module for free.' mod='skebby'}</p>
+			<p>{l s='Register now and try this module for free' mod='skebby'}</p>
 	
 			<div class="text-center mt50">
 				<a target="_blank" href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">{l s='FREE TRIAL.' mod='skebby'}<br/>{l s='get 100 free SMS' mod='skebby'}</a>
@@ -123,10 +123,10 @@
 	<div class="row">
 		<div class="col-md-6">
 			<h4>{l s='PROMOTIONAL CAMPAIGNS THROUGH OUR WEB PANEL' mod='skebby'}</h4>
-			<p>{l s='With Skebby you can send bulk campaign..' mod='skebby'}</p>
+			<p>{l s='With Skebby you can send bulk campaigns' mod='skebby'}</p>
 			<ul>
 				<li>{l s='Reach anyone, everywhere in real time' mod='skebby'}</li>
-				<li>{l s='Adquire and interact with your customers. ' mod='skebby'}</li>
+				<li>{l s='Adquire and interact and build loyalty with your customers' mod='skebby'}</li>
 			</ul>
 			<p>{l s='Send 10/100/1000 SMS with your special offers and discounts!' mod='skebby'}</p>
 		</div>
