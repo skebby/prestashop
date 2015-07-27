@@ -72,7 +72,7 @@
 </style>
 <div class="panel" id="fieldset_0">
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			<h4>LOREM IPSUM</h4>
 			<ul>
 				<li>{l s='When a customer places an order the specified recipient receives a SMS notification.' mod='skebby'}</li>
@@ -83,7 +83,7 @@
 			<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">PROVA GRATIS<br/>100 SMS omaggio</a>
 			
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-8">
 		
 			<iframe width="420" height="315" src="https://www.youtube.com/embed/uuItWmtSatk" frameborder="0" allowfullscreen></iframe>
 	
