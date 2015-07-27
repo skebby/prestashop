@@ -1231,7 +1231,7 @@ class Skebby extends Module
 	        unset($fields_list['shop_name']);
 	    $helper_list = New HelperList();
 	    $helper_list->module = $this;
-	    $helper_list->title = $this->l('Newsletter registrations');
+	    $helper_list->title = $this->l('Customers');
 	    $helper_list->shopLinkType = '';
 	    $helper_list->no_link = true;
 	    $helper_list->show_toolbar = true;
@@ -1241,27 +1241,27 @@ class Skebby extends Module
 	    $helper_list->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
 	    $helper_list->token = Tools::getAdminTokenLite('AdminModules');
 	    $helper_list->actions = array('viewCustomer');
-	    $helper_list->toolbar_btn['export'] = array(
+	   /* $helper_list->toolbar_btn['export'] = array(
 	        'href' => $helper_list->currentIndex.'&exportSubscribers&token='.$helper_list->token,
 	        'desc' => $this->l('Export')
-	    );
+	    );*/
 	    /* Before 1.6.0.7 displayEnableLink() could not be overridden in Module class
-	     we declare another row action instead 			*/
+	     we declare another row action instead
 	    if (version_compare(_PS_VERSION_, '1.6.0.7', '<'))
 	    {
 	        unset($fields_list['subscribed']);
 	        $helper_list->actions = array_merge($helper_list->actions, array('unsubscribe'));
-	    }
+	    }*/
 	    // This is needed for displayEnableLink to avoid code duplication
 	    $this->_helperlist = $helper_list;
 	    /* Retrieve list data */
-	    $subscribers = $this->getCustomers();
-	    $helper_list->listTotal = count($subscribers);
+	    $customers = $this->getCustomers();
+	    $helper_list->listTotal = count($customers);
 	    /* Paginate the result */
 	    $page = ($page = Tools::getValue('submitFilter'.$helper_list->table)) ? $page : 1;
 	    $pagination = ($pagination = Tools::getValue($helper_list->table.'_pagination')) ? $pagination : 50;
-	    $subscribers = $this->paginateSubscribers($subscribers, $page, $pagination);
-	    return $helper_list->generateList($subscribers, $fields_list);
+	    $subscribers = $this->paginateSubscribers($customers, $page, $pagination);
+	    return $helper_list->generateList($customers, $fields_list);
 	}
 
 	public function paginateSubscribers($subscribers, $page = 1, $pagination = 50)
