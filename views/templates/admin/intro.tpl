@@ -64,7 +64,8 @@
 	</div>
 	<div class="col-md-4">
 	
-		VIDEO PLACEHOLDER
+		<img src="/modules/skebby/logo.png" alt="Intro"><br/>
+		<a href="btn">GUARDA LA DEMO SMS DA WEB</a>
 
 	</div>
 
