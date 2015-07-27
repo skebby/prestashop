@@ -134,7 +134,7 @@
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
-			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">Guarda la demo SMS da web</a>
+			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">{l s='TRY OUR WEB INTERFACE.' mod='skebby'}</a>
 		
 	
 		</div>
