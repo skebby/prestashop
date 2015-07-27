@@ -24,7 +24,7 @@
 *}
 <div class="mt30">
 
-<div class="mb30">
+<div id="skebbytabs" class="mb30">
 	<ul class="nav nav-tabs nav-justified" role="tablist">
 	  <li role="presentation" class="active"><a href="#settings" role="tab" data-toggle="tab">{l s='Settings' mod='skebby'}</a></li>
 	  <li role="presentation"><a href="#campaigns" role="tab" data-toggle="tab">{l s='Campaigns' mod='skebby'}</a></li>

@@ -23,4 +23,12 @@
 * International Registered Trademark & Property of PrestaShop SA
 *}
 </div>
+<script>
 
+$('#skebbytabs a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+
+
+</script>
