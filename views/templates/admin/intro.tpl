@@ -119,7 +119,7 @@
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-6 text-center">
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
