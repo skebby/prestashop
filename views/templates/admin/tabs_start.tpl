@@ -25,9 +25,9 @@
 <div class="mt30">
 
 <div class="mb30">
-	<ul class="nav nav-pills">
-	  <li role="presentation" class="active"><a href="#">Home</a></li>
-	  <li role="presentation"><a href="#">Profile</a></li>
-	  <li role="presentation"><a href="#">Messages</a></li>
+	<ul class="nav nav-tabs nav-justified">
+	  <li role="presentation" class="active"><a href="#settings">{l s='Settings' mod='skebby'}</a></li>
+	  <li role="presentation"><a href="#campaigns">{l s='Campaigns' mod='skebby'}</a></li>
+	  <li role="presentation"><a href="#messages">{l s='Reports' mod='skebby'}</a></li>
 	</ul>
 </div>
