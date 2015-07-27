@@ -94,7 +94,7 @@
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
-			<a href="http://www.skebby.it/business/index/demo-web/" id="A_1">Guarda la demo<br id="BR_2" />SMS da web</a>
+			<a href="http://www.skebby.it/business/index/demo-web/" id="A_1">Guarda la demo SMS da web</a>
 		
 	
 		</div>
