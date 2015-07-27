@@ -48,17 +48,34 @@
     transition: all 0.1s ease 0s;
 }
 
-#BR_2 {
+
+
+#B_1 {
+    box-shadow: rgb(251, 175, 93) 0px 1px 0px 0px inset;
     color: rgb(255, 255, 255);
     cursor: pointer;
-    letter-spacing: 0.300000011920929px;
-    text-align: center;
+    display: block;
+    float: right;
+    height: 17px;
+    text-align: left;
+    text-decoration: none;
     text-shadow: rgb(119, 119, 119) 1px 1px 0px;
     text-transform: uppercase;
-    border: 0px none rgb(255, 255, 255);
-    font: normal normal bold normal 15px/15px arial;
+    width: 263.375px;
+    perspective-origin: 152.6875px 14.5px;
+    transform-origin: 152.6875px 14.5px;
+    background: rgba(0, 0, 0, 0) -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.05, rgb(255, 143, 0)), to(rgb(255, 107, 0))) repeat scroll 0% 0% / auto padding-box border-box;
+    border: 1px solid rgb(242, 101, 34);
+    border-radius: 3px 3px 3px 3px;
+    font: normal normal bold normal 15px/normal arial;
+    margin: 0px 0px 0px 30px;
     outline: rgb(255, 255, 255) none 0px;
-}
+    padding: 5px 20px;
+    transition: all 0.1s ease 0s;
+}/*#A_1*/
+
+
+
 
 </style>
 <div class="panel" id="fieldset_0">
@@ -70,6 +87,9 @@
 				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
+
+			<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">Iscriviti e invia 100 SMS GRATIS</a>
+			
 		</div>
 		<div class="col-md-4">
 		
@@ -94,7 +114,7 @@
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
-			<a href="http://www.skebby.it/business/index/demo-web/" id="A_1">Guarda la demo SMS da web</a>
+			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">Guarda la demo SMS da web</a>
 		
 	
 		</div>
