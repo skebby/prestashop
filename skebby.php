@@ -927,7 +927,7 @@ class Skebby extends Module
 // 		$theform .= $this->renderList();
 // 		$theform .= $this->renderExportForm();
 // 		$theform .= '</div>';
-		$theform .= '<div class="tab-pane" id="messages">';
+		$theform .= '<div class="tab-pane" id="tutorials">';
 		$theform .= '</div>';
 		$theform .= '</div>';
 
