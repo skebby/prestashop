@@ -905,10 +905,10 @@ class Skebby extends Module
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="campaigns">';
-		$theform .= '';
+		$theform .= 'campaigns';
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="messages">';
-		$theform .= '';
+		$theform .= 'messages';
 		$theform .= '</div>';
 		$theform .= '</div>';
 
