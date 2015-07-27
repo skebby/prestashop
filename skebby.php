@@ -923,7 +923,7 @@ class Skebby extends Module
 		$theform .= '<div class="tab-pane active" id="settings">';
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
-		$theform .= '<div class="tab-pane" id="campaigns">';
+		$theform .= '<div class="tab-pane" id="customers">';
 		$theform .= $this->renderList();
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="messages">';
@@ -1231,8 +1231,11 @@ class Skebby extends Module
 	            'search' => false,
 	        )
 	    );
+
 	    if (!Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE'))
 	        unset($fields_list['shop_name']);
+
+
 	    $helper_list = New HelperList();
 	    $helper_list->module = $this;
 	    $helper_list->title = $this->l('Registered Customers');
@@ -1241,7 +1244,7 @@ class Skebby extends Module
 	    $helper_list->show_toolbar = true;
 	    $helper_list->simple_header = false;
 	    $helper_list->identifier = 'id';
-	    $helper_list->table = 'campaigns';
+	    $helper_list->table = 'customers';
 	    $helper_list->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
 	    $helper_list->token = Tools::getAdminTokenLite('AdminModules');
 	    $helper_list->actions = array('viewCustomer');
@@ -1260,8 +1263,6 @@ class Skebby extends Module
 	    $this->_helperlist = $helper_list;
 	    /* Retrieve list data */
 	    $customers = $this->getCustomers();
-// 	    print_r($customers);
-// 	    exit();
 	    $helper_list->listTotal = count($customers);
 	    /* Paginate the result */
 	    $page = ($page = Tools::getValue('submitFilter'.$helper_list->table)) ? $page : 1;
