@@ -96,8 +96,10 @@
 				<li>{l s='When an order status transitions to SHIPPED the customer receives a SMS notification. ' mod='skebby'}</li>
 			</ul>
 			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
-
-			<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">PROVA GRATIS<br/>100 SMS omaggio</a>
+	
+			<div class="text-center">
+				<a target="_blank" title="Iscrizione gratis con 100 SMS in omaggio " href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">PROVA GRATIS<br/>100 SMS omaggio</a>
+			</div>
 			
 		</div>
 		<div class="col-md-6">
