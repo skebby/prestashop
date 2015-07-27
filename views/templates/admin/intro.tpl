@@ -59,8 +59,8 @@
 		</div>
 		<div class="col-md-4">
 		
-			<img src="/modules/skebby/logo.png" alt="Intro"><br/>
-			<a href="btn">GUARDA LA DEMO SMS DA WEB</a>
+			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
+			<a href="btn btn-primary ">GUARDA LA DEMO SMS DA WEB</a>
 	
 		</div>
 	
