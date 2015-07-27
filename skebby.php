@@ -187,6 +187,23 @@ class Skebby extends Module
 
 			$this->logMessage('Successfully installed Skebby Module');
 			$this->logMessage('Default Quality is: '.Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
+
+
+			Db::getInstance()->execute('
+				CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'skebby_log` (
+					`id` int(6) NOT NULL AUTO_INCREMENT,
+					`id_shop` INTEGER UNSIGNED NOT NULL DEFAULT \'1\',
+					`id_shop_group` INTEGER UNSIGNED NOT NULL DEFAULT \'1\',
+					`email` varchar(255) NOT NULL,
+					`newsletter_date_add` DATETIME NULL,
+					`ip_registration_newsletter` varchar(15) NOT NULL,
+					`http_referer` VARCHAR(255) NULL,
+					`active` TINYINT(1) NOT NULL DEFAULT \'0\',
+					PRIMARY KEY(`id`)
+				) ENGINE='._MYSQL_ENGINE_.' default CHARSET=utf8');
+
+
+
 		}
 		else
 			$this->logMessage('Error Installing Skebby Module');
@@ -254,6 +271,8 @@ class Skebby extends Module
 		$this->logMessage('Uninstalling Skebby Module');
 
 		$success = (parent::uninstall() && $this->removeConfigKeys() && $this->hookUninstall());
+
+		Db::getInstance()->execute('DROP TABLE '._DB_PREFIX_.'skebby_log');
 
 		if ($success)
 			$this->logMessage('Skebby Module Uninstalled Successfully');
@@ -905,7 +924,7 @@ class Skebby extends Module
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="campaigns">';
-		$theform .= 'campaigns';
+		$theform .= $this->renderList();
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="messages">';
 		$theform .= 'messages';
@@ -1166,4 +1185,148 @@ class Skebby extends Module
 		$this->logger = new FileLogger(0);
 		$this->logger->setFilename(_PS_ROOT_DIR_.'/log/skebby.log');
 	}
+
+
+
+	public function renderList()
+	{
+	    $fields_list = array(
+	        'id' => array(
+	            'title' => $this->l('ID'),
+	            'search' => false,
+	        ),
+	        'shop_name' => array(
+	            'title' => $this->l('Shop'),
+	            'search' => false,
+	        ),
+	        'gender' => array(
+	            'title' => $this->l('Gender'),
+	            'search' => false,
+	        ),
+	        'lastname' => array(
+	            'title' => $this->l('Lastname'),
+	            'search' => false,
+	        ),
+	        'firstname' => array(
+	            'title' => $this->l('Firstname'),
+	            'search' => false,
+	        ),
+	        'email' => array(
+	            'title' => $this->l('Email'),
+	            'search' => false,
+	        ),
+	        'subscribed' => array(
+	            'title' => $this->l('Subscribed'),
+	            'type' => 'bool',
+	            'active' => 'subscribed',
+	            'search' => false,
+	        ),
+	        'newsletter_date_add' => array(
+	            'title' => $this->l('Subscribed on'),
+	            'type' => 'date',
+	            'search' => false,
+	        )
+	    );
+	    if (!Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE'))
+	        unset($fields_list['shop_name']);
+	    $helper_list = New HelperList();
+	    $helper_list->module = $this;
+	    $helper_list->title = $this->l('Newsletter registrations');
+	    $helper_list->shopLinkType = '';
+	    $helper_list->no_link = true;
+	    $helper_list->show_toolbar = true;
+	    $helper_list->simple_header = false;
+	    $helper_list->identifier = 'id';
+	    $helper_list->table = 'merged';
+	    $helper_list->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
+	    $helper_list->token = Tools::getAdminTokenLite('AdminModules');
+	    $helper_list->actions = array('viewCustomer');
+	    $helper_list->toolbar_btn['export'] = array(
+	        'href' => $helper_list->currentIndex.'&exportSubscribers&token='.$helper_list->token,
+	        'desc' => $this->l('Export')
+	    );
+	    /* Before 1.6.0.7 displayEnableLink() could not be overridden in Module class
+	     we declare another row action instead 			*/
+	    if (version_compare(_PS_VERSION_, '1.6.0.7', '<'))
+	    {
+	        unset($fields_list['subscribed']);
+	        $helper_list->actions = array_merge($helper_list->actions, array('unsubscribe'));
+	    }
+	    // This is needed for displayEnableLink to avoid code duplication
+	    $this->_helperlist = $helper_list;
+	    /* Retrieve list data */
+	    $subscribers = $this->getCustomers();
+	    $helper_list->listTotal = count($subscribers);
+	    /* Paginate the result */
+	    $page = ($page = Tools::getValue('submitFilter'.$helper_list->table)) ? $page : 1;
+	    $pagination = ($pagination = Tools::getValue($helper_list->table.'_pagination')) ? $pagination : 50;
+	    $subscribers = $this->paginateSubscribers($subscribers, $page, $pagination);
+	    return $helper_list->generateList($subscribers, $fields_list);
+	}
+
+
+	public function renderSearchForm()
+	{
+	    $fields_form = array(
+	        'form' => array(
+	            'legend' => array(
+	                'title' => $this->l('Search for addresses'),
+	                'icon' => 'icon-search'
+	            ),
+	            'input' => array(
+	                array(
+	                    'type' => 'text',
+	                    'label' => $this->l('Email address to search'),
+	                    'name' => 'searched_email',
+	                    'class' => 'fixed-width-xxl',
+	                    'desc' => $this->l('Example: contact@prestashop.com or @prestashop.com')
+	                ),
+	            ),
+	            'submit' => array(
+	                'title' => $this->l('Search'),
+	                'icon' => 'process-icon-refresh',
+	            )
+	        ),
+	    );
+	    $helper = new HelperForm();
+	    $helper->table = $this->table;
+	    $helper->identifier = $this->identifier;
+	    $helper->submit_action = 'searchEmail';
+	    $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+	    $helper->token = Tools::getAdminTokenLite('AdminModules');
+	    $helper->tpl_vars = array(
+	        'fields_value' => array('searched_email' => $this->_searched_email),
+	        'languages' => $this->context->controller->getLanguages(),
+	        'id_language' => $this->context->language->id
+	    );
+	    return $helper->generateForm(array($fields_form));
+	}
+
+
+	public function getCustomers()
+	{
+	    $dbquery = new DbQuery();
+	    $dbquery->select('c.`id_customer` AS `id`, s.`name` AS `shop_name`, gl.`name` AS `gender`, c.`lastname`, c.`firstname`, c.`email`, c.`newsletter` AS `subscribed`, c.`newsletter_date_add`');
+	    $dbquery->from('customer', 'c');
+	    $dbquery->leftJoin('shop', 's', 's.id_shop = c.id_shop');
+	    $dbquery->leftJoin('gender', 'g', 'g.id_gender = c.id_gender');
+	    $dbquery->leftJoin('gender_lang', 'gl', 'g.id_gender = gl.id_gender AND gl.id_lang = '.(int)$this->context->employee->id_lang);
+// 	    $dbquery->where('c.`newsletter` = 1');
+// 	    if ($this->_searched_email)
+// 	        $dbquery->where('c.`email` LIKE \'%'.pSQL($this->_searched_email).'%\' ');
+	    $customers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($dbquery->build());
+// 	    $dbquery = new DbQuery();
+// 	    $dbquery->select('CONCAT(\'N\', n.`id`) AS `id`, s.`name` AS `shop_name`, NULL AS `gender`, NULL AS `lastname`, NULL AS `firstname`, n.`email`, n.`active` AS `subscribed`, n.`newsletter_date_add`');
+// 	    $dbquery->from('newsletter', 'n');
+// 	    $dbquery->leftJoin('shop', 's', 's.id_shop = n.id_shop');
+// 	    $dbquery->where('n.`active` = 1');
+// 	    if ($this->_searched_email)
+// 	        $dbquery->where('n.`email` LIKE \'%'.pSQL($this->_searched_email).'%\' ');
+// 	    $non_customers = Db::getInstance()->executeS($dbquery->build());
+// 	    $subscribers = array_merge($customers, $non_customers);
+	    return $customers;
+	}
+
+
+
 }
