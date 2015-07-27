@@ -126,7 +126,7 @@
 			<p>{l s='With Skebby you can send bulk campaigns' mod='skebby'}</p>
 			<ul>
 				<li>{l s='Reach anyone, everywhere in real time' mod='skebby'}</li>
-				<li>{l s='Adquire and interact and build loyalty with your customers' mod='skebby'}</li>
+				<li>{l s='Adquire, interact and build loyalty with your customers' mod='skebby'}</li>
 			</ul>
 			<p>{l s='Send 10/100/1000 SMS with your special offers and discounts!' mod='skebby'}</p>
 		</div>
