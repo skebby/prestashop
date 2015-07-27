@@ -1215,7 +1215,7 @@ class Skebby extends Module
 	            'title' => $this->l('Email'),
 	            'search' => false,
 	        ),
-	        'mobile' => array(
+	        'phone_mobile' => array(
 	            'title' => $this->l('Mobile'),
 	            'search' => true,
 	        ),
