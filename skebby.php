@@ -924,6 +924,7 @@ class Skebby extends Module
 		$theform .= $helper->generateForm($fields_form);
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="customers">';
+		$theform .= $this->renderSearchForm();
 		$theform .= $this->renderList();
 		$theform .= '</div>';
 		$theform .= '<div class="tab-pane" id="messages">';
