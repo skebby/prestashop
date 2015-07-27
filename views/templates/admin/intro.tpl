@@ -128,7 +128,7 @@
 				<li>{l s='Reach anyone, everywhere in real time' mod='skebby'}</li>
 				<li>{l s='Adquire and interact with your customers. ' mod='skebby'}</li>
 			</ul>
-			<p>{l s='Please configure the module by filling the form below.' mod='skebby'}</p>
+			<p>{l s='Send 10/100/1000 SMS with your special offers and discounts!' mod='skebby'}</p>
 		</div>
 		<div class="col-md-6 text-center">
 		
