@@ -61,7 +61,6 @@
     text-decoration: none;
     text-shadow: rgb(119, 119, 119) 1px 1px 0px;
     text-transform: uppercase;
-    width: 263.375px;
     perspective-origin: 152.6875px 14.5px;
     transform-origin: 152.6875px 14.5px;
     background: rgba(0, 0, 0, 0) -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.05, rgb(255, 143, 0)), to(rgb(255, 107, 0))) repeat scroll 0% 0% / auto padding-box border-box;
