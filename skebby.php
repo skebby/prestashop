@@ -1306,7 +1306,7 @@ class Skebby extends Module
 	    $helper->table = $this->table;
 	    $helper->identifier = $this->identifier;
 	    $helper->submit_action = 'searchEmail';
-	    $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+	    $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&module_name='.$this->name;
 	    $helper->token = Tools::getAdminTokenLite('AdminModules');
 	    $helper->tpl_vars = array(
 	        'fields_value' => array('searched_email' => $this->_searched_email),
