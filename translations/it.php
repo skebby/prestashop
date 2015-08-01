@@ -1,8 +1,8 @@
 <?php
+
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{skebby}prestashop>skebby_1c3e9ab48b606fa9a00486c2a5651e36'] = 'Skebby SMS';
-$_MODULE['<{skebby}prestashop>skebby_0ec4c88ca5ed3674124216e1fcc8864f'] = 'With Skebby SMS module for Prestashop you will be able to integrate all the Skebby features with no coding. This module requires to have an account with skebby and have available credit.';
 $_MODULE['<{skebby}prestashop>skebby_d1278a620424ab3a0d149d03210100db'] = 'Are you sure you want to uninstall? You will not be able to send sms notifications.';
 $_MODULE['<{skebby}prestashop>skebby_e3ccf96d2278bceec0342b3f811964f0'] = 'Missing sender mobile number';
 $_MODULE['<{skebby}prestashop>skebby_52288b8466a3894bc6ca952ea71cdf81'] = 'Missing Skebby Account Password';
@@ -12,7 +12,6 @@ $_MODULE['<{skebby}prestashop>skebby_d591cbc447d01e5a6165096ebfdf804e'] = 'You m
 $_MODULE['<{skebby}prestashop>skebby_1b18bd5d9d85f4f667614345ee20e3b2'] = 'You must enable allow_url_fopen option on your server if you want to use this module.';
 $_MODULE['<{skebby}prestashop>skebby_f4f70727dc34561dfde1a3c529b6205c'] = 'Settings';
 $_MODULE['<{skebby}prestashop>skebby_5b81a2c8e240121342e58c11f1124105'] = 'Skebby Account Username';
-$_MODULE['<{skebby}prestashop>skebby_313688749a411265c35b66fd1a10508c'] = 'The username to access Skebby services. You cannot use your email or phone number, only username is allowed on gateway.';
 $_MODULE['<{skebby}prestashop>skebby_03d737990b0bd781ead982cd740b5179'] = 'Skebby Account Password';
 $_MODULE['<{skebby}prestashop>skebby_487735bf86a3ce3ce739d1069132d50e'] = 'The password to access Skebby services';
 $_MODULE['<{skebby}prestashop>skebby_92b8179be8eb4889d09eb7843ebe33d3'] = 'SMS Quality:';
@@ -22,7 +21,6 @@ $_MODULE['<{skebby}prestashop>skebby_8195e4ee3ba87646bc386e9a20ee5ee4'] = 'Sende
 $_MODULE['<{skebby}prestashop>skebby_81c645e70af05c56e25b78338e5d6dc4'] = 'A verified number in your Skebby Account';
 $_MODULE['<{skebby}prestashop>skebby_6252c0f2c2ed83b7b06dfca86d4650bb'] = 'Invalid characters:';
 $_MODULE['<{skebby}prestashop>skebby_7beabe92366bf3f04de2c520d5ddc774'] = 'Use Alphanumeric Sender instead of mobile number?';
-$_MODULE['<{skebby}prestashop>skebby_864f513f3324d07408a9cf5694e54f6d'] = 'Check this option if you prefer to send your sms using a string alias instead of a mobile number. Some restrictions apply.';
 $_MODULE['<{skebby}prestashop>skebby_0f5b4b78f2a3a84572dd74be38a65c50'] = 'Prefer Alphanumeric Sender';
 $_MODULE['<{skebby}prestashop>skebby_05da7b7279f6fd2f09efd595f0aa750e'] = 'Alphanumeric Sender';
 $_MODULE['<{skebby}prestashop>skebby_bff1ad4e82a5bc8f4d1beaebd895b7c5'] = 'An Alphanumeric Sender registered on Skebby. Please refer to website docs for AGCOM specifications.';
@@ -34,12 +32,8 @@ $_MODULE['<{skebby}prestashop>skebby_5e45a2b5d5dafb562dcdbc454d4cab21'] = 'Order
 $_MODULE['<{skebby}prestashop>skebby_04f0fc5c76ddd90545eceb7293400be5'] = 'Recipient receiving SMS Order Notifications';
 $_MODULE['<{skebby}prestashop>skebby_d27a8f891cb3a35741657f5a00f087a6'] = 'Please refer to website docs for AGCOM specifications';
 $_MODULE['<{skebby}prestashop>skebby_a65e4728d58ac76ac4c31867781cdb5d'] = 'Order message template';
-$_MODULE['<{skebby}prestashop>skebby_9102e5fced53886930ca1d365b2874dd'] = 'Type the message template for orders. You can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.';
 $_MODULE['<{skebby}prestashop>skebby_75785d8004e59936d2753e9aca2bca94'] = 'Shipment Status notification enabled?';
-$_MODULE['<{skebby}prestashop>skebby_97bbf53277de4d2dd477709ab2292b9f'] = 'Check this option in order to send automatically a message to your customer when an order is shipped. The message will be sent if customer mobile phone and country are specified.';
 $_MODULE['<{skebby}prestashop>skebby_27e375686d86062ea3b2d3df2b16af75'] = 'Shipment Status template';
-$_MODULE['<{skebby}prestashop>skebby_98ba5999c26d2f1716bc875ae53813bf'] = 'Type the message a customer receive when the order status transitions to SHIPPED. You can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.';
-$_MODULE['<{skebby}prestashop>skebby_702f51b0f371d09d44bae4ec7e6234a4'] = 'Check the Credit';
 $_MODULE['<{skebby}prestashop>skebby_c9cc8cce247e49bae79f15173ce97354'] = 'Salva';
 $_MODULE['<{skebby}prestashop>skebby_630f6dc397fe74e52d5189e2c80f282b'] = 'Back to list';
 $_MODULE['<{skebby}prestashop>skebby_bc3b39774fb3f4066b15a79e9134b200'] = 'Invalid username';
