@@ -23,7 +23,7 @@ Step 5)
 Go to modules tab, find Skebby module and click the 'configure' link.
 
 Step 6)
-Enjoy
+Enjoy Skebby
 
 
 
