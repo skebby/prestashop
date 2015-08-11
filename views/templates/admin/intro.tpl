@@ -34,7 +34,7 @@
 			<p>{l s='Register now and try this module for free' mod='skebby'}</p>
 	
 			<div class="text-center mt50">
-				<a target="_blank" href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">{l s='FREE TRIAL.' mod='skebby'}<br/>{l s='get 100 free SMS' mod='skebby'}</a>
+				<a target="_blank" href="http://www.skebby.it/business/servizi-sms-di-massa/?ac=3271487" id="B_1">{l s='FREE TRIAL.' mod='skebby'}<br/>{l s='get 100 free SMS' mod='skebby'}</a>
 			</div>
 			
 		</div>
@@ -63,7 +63,7 @@
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
 			
-			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">{l s='TRY OUR WEB PANEL' mod='skebby'}</a>
+			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/?ac=3271487" id="A_1">{l s='TRY OUR WEB PANEL' mod='skebby'}</a>
 		
 	
 		</div>
