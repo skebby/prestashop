@@ -91,8 +91,7 @@ class Skebby extends Module
 
 		$this->displayName = $this->l('Skebby SMS');
 
-		$this->description = $this->l(
-			'With Skebby SMS module for Prestashop you will be able to integrate all the Skebby features with no coding. This module requires to  have an account with skebby and have available credit.');
+		$this->description = $this->l('Send and receive automatic SMS notification alerts on order status of your PrestaShop store and use the web interface Skebby.it for sending promotional SMS campaigns that increase sales! Official PrestaShop partner: try it now with 100 SMS free!');
 
 		$this->confirmUninstall = $this->l('Are you sure you want to uninstall? You will not be able to send sms notifications.');
 
@@ -185,10 +184,8 @@ class Skebby extends Module
 
 			Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $suggested_shipment_template);
 
-			$this->logMessage('Successfully installed Skebby Module');
-			$this->logMessage('Default Quality is: '.Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
 
-
+			// create a log table to store sent messages
 			Db::getInstance()->execute('
 				CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'skebby_log` (
 					`id` int(6) NOT NULL AUTO_INCREMENT,
@@ -202,6 +199,8 @@ class Skebby extends Module
 					PRIMARY KEY(`id`)
 				) ENGINE='._MYSQL_ENGINE_.' default CHARSET=utf8');
 
+			$this->logMessage('Successfully installed Skebby Module');
+			$this->logMessage('Default Quality is: '.Tools::getValue('SKEBBY_DEFAULT_QUALITY'));
 
 
 		}
@@ -272,6 +271,7 @@ class Skebby extends Module
 
 		$success = (parent::uninstall() && $this->removeConfigKeys() && $this->hookUninstall());
 
+		// Remove the log table
 		Db::getInstance()->execute('DROP TABLE '._DB_PREFIX_.'skebby_log');
 
 		if ($success)
@@ -717,8 +717,7 @@ class Skebby extends Module
 				array(
 					'type' => 'text',
 					'label' => $this->l('Skebby Account Username'),
-					'desc' => $this->l(
-						'The username to access Skebby services. You cannot use your email or phone number, only username is allowed on gateway.'),
+					'desc' => $this->l('Skebby Username to authenticate over skebby gateway.'),
 					'name' => 'SKEBBY_USERNAME',
 					'size' => 20,
 					'required' => true
@@ -756,8 +755,7 @@ class Skebby extends Module
 				array(
 					'type' => 'checkbox',
 					'label' => $this->l('Use Alphanumeric Sender instead of mobile number?'),
-					'desc' => $this->l(
-						'Check this option if you prefer to send your sms using a string alias instead of a mobile number. Some restrictions apply.'),
+					'desc' => $this->l('Check this box if you prefer to send your sms using a string alias instead of a mobile number. Some restrictions apply.'),
 					'name' => 'SKEBBY_ALPHASENDER',
 					'required' => false,
 					'values' => array(
@@ -811,8 +809,7 @@ class Skebby extends Module
 				array(
 					'type' => 'textarea',
 					'label' => $this->l('Order message template'),
-					'desc' => $this->l(
-						'Type the message template for orders. You can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
+					'desc' => $this->l('Specify the message template for orders. Available variables are: %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
 					'name' => 'SKEBBY_ORDER_TEMPLATE',
 					'cols' => 40,
 					'rows' => 5,
@@ -821,8 +818,7 @@ class Skebby extends Module
 				array(
 					'type' => 'checkbox',
 					'label' => $this->l('Shipment Status notification enabled?'),
-					'desc' => $this->l(
-						'Check this option in order to send automatically a message to your customer when an order is shipped. The message will be sent if customer mobile phone and country are specified.'),
+					'desc' => $this->l('Check this option in order to send automatically a message to your customer when new order is shipped. Requires customer mobile phone and country.'),
 					'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION',
 					'required' => false,
 					'values' => array(
@@ -840,8 +836,7 @@ class Skebby extends Module
 				array(
 					'type' => 'textarea',
 					'label' => $this->l('Shipment Status template'),
-					'desc' => $this->l(
-						'Type the message a customer receive when the order status transitions to SHIPPED. You can use the variables %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
+					'desc' => $this->l('Specify the message a customer receive when the order status transitions to SHIPPED. Available variables are: %civility% %first_name% %last_name% %order_price% %order_date% %order_reference% that will be replaced in the message.'),
 					'name' => 'SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE',
 					'cols' => 40,
 					'rows' => 5,
@@ -866,6 +861,8 @@ class Skebby extends Module
 		// Module, token and currentIndex
 		$helper->module = $this;
 		$helper->name_controller = $this->name;
+
+		// Store current token
 		$helper->token = Tools::getAdminTokenLite('AdminModules');
 		$helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
 
@@ -873,8 +870,10 @@ class Skebby extends Module
 		$helper->default_form_language = $default_lang;
 		$helper->allow_employee_form_lang = $default_lang;
 
-		// Title and toolbar
+		// Form Title
 		$helper->title = $this->displayName;
+
+		// Form Toolbar
 		$helper->show_toolbar = true; // false -> remove toolbar
 		$helper->toolbar_scroll = true; // yes - > Toolbar is always visible on the top of the screen.
 		$helper->submit_action = 'submit'.$this->name;
@@ -905,8 +904,12 @@ class Skebby extends Module
 			'1');
 		$helper->fields_value['FREE_TEXT'] = Configuration::get('FREE_TEXT');
 
+
+		// Build the complete panel
+
 		$theform = '';
 
+		// Bind the form with data
 		$this->context->smarty->assign($data);
 
 		$theform .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
@@ -932,13 +935,14 @@ class Skebby extends Module
 		$theform .= '</div>';
 		$theform .= '</div>';
 
+		// append the closing part of the panel
 		$theform .= $this->display(__FILE__, 'views/templates/admin/tabs_end.tpl');
 
 		return $theform;
 	}
 
 	/**
-	 * When submitted the config form!
+	 * Callback on form postback
 	 *
 	 * @return string
 	 */
@@ -948,6 +952,9 @@ class Skebby extends Module
 
 		if (Tools::isSubmit('submit'.$this->name))
 		{
+
+			// Username field
+
 			$skebby_username = (string)Tools::getValue('SKEBBY_USERNAME');
 			if (!$skebby_username || empty($skebby_username) || !Validate::isGenericName($skebby_username))
 				$output .= $this->displayError($this->l('Invalid username'));
@@ -1084,26 +1091,17 @@ class Skebby extends Module
 
 			$this->logMessage('Updated config Values');
 
+
+			// Debug the updated settings
+
 			$this->dumpConfig();
-
-
 
 
 		}elseif (Tools::isSubmit('exportCustomers'))
 			{
-			    $header = array('id', 'gender', 'lastname', 'firstname'); // TODO
-			    $array_to_export = array_merge(array($header), $this->getCustomers());
-			    $file_name = 'csv/'. time().'.csv';
-			    $fd = fopen($this->getLocalPath().$file_name, 'w+');
-			    fwrite($fd, 'aaaa', 4096);
-			    foreach ($array_to_export as $tab)
-			    {
-			        $line = implode(';', $tab);
-			        $line .= "\n";
-			        fwrite($fd, $line, 4096);
-			    }
-			    fclose($fd);
-			    Tools::redirect(_PS_BASE_URL_.__PS_BASE_URI__.'/modules/'.$this->name.'/'.$file_name);
+
+				$this->handleCustomersExport();
+
 		}else{
 			return $output.$this->displayForm();
 		}
@@ -1210,6 +1208,79 @@ class Skebby extends Module
 
 
 
+	// CUSTOMERS MANAGEMENT//////////////////////////////////////////
+	// This part will be enabled in V2
+
+
+
+	/**
+	 * Build a csv file
+	 */
+	public function handleCustomersExport(){
+
+		$file_name = 'csv/' . time() . '.csv';
+
+		if($this->createCSVFile($file_name)){
+			// redirect to the file for download
+			Tools::redirect(_PS_BASE_URL_ . __PS_BASE_URI__ . '/modules/' . $this->name . '/' . $file_name);
+		}else{
+			//TODO: Handle the case of the file not being written
+		}
+
+	}
+
+
+	/**
+	 * Create a csv file from the customers db query
+	 *
+	 * @param string $file_name
+	 * @return booleantrue if the file has been created properly
+	 */
+	private function createCSVFile($file_name)
+    {
+
+        $header = array(
+			'id',
+			'gender',
+			'lastname',
+			'firstname'
+		);
+
+		$file_path = $this->getLocalPath() . $file_name;
+
+		$array_to_export = array_merge(array(
+			$header
+		), $this->getCustomers());
+
+		// open the file
+
+		$fd = fopen($file_path, 'w+');
+
+		// check the file handler can be open.
+		if($fd == false){
+			return false;
+		}
+
+		// Debug
+		//fwrite($fd, 'aaaa', 4096);
+
+		foreach ($array_to_export as $tab)
+		{
+			$line = implode(';', $tab);
+			$line .= "\n";
+			fwrite($fd, $line, 4096);
+		}
+		fclose($fd);
+
+		return true;
+
+    }
+
+
+
+	/**
+	 * Render a list of customers in a table
+	 */
 	public function renderList()
 	{
 	    $fields_list = array(
@@ -1294,6 +1365,14 @@ class Skebby extends Module
 	}
 
 
+
+	/**
+	 * Helper functionused by the datagrid to display a link to full profile in a customer row.
+	 *
+	 * @param string $token
+	 * @param unknown $id
+	 * @param string $name
+	 */
 	public function displayViewCustomerLink($token = null, $id, $name = null)
 	{
 	    $this->smarty->assign(array(
@@ -1305,9 +1384,14 @@ class Skebby extends Module
 	}
 
 
-
+	/**
+	 * This form enables the user to export all the customers
+	 */
 	public function renderExportForm()
 	{
+
+		// Define fields
+
 	    $fields_form = array(
 	        'form' => array(
 	            'legend' => array(
@@ -1324,6 +1408,8 @@ class Skebby extends Module
 	        ),
 	    );
 
+
+	    // Build the form
 
 	    $helper = new HelperForm();
 	    $helper->table = $this->table;
@@ -1348,7 +1434,13 @@ class Skebby extends Module
 
 
 
-
+	/**
+	 *
+	 * @param unknown $subscribers
+	 * @param number $page
+	 * @param number $pagination
+	 * @return multitype:
+	 */
 	public function paginateSubscribers($subscribers, $page = 1, $pagination = 50)
 	{
 	    if(count($subscribers) > $pagination)
@@ -1357,6 +1449,11 @@ class Skebby extends Module
 	}
 
 
+
+	/**
+	 * return a formatted array of customers
+	 * @return array
+	 */
 	public function getCustomers()
 	{
 	    $dbquery = new DbQuery();
@@ -1374,6 +1471,13 @@ class Skebby extends Module
 	    return $customers;
 	}
 
+
+	/**
+	 * This function executes as cron entry function
+	 */
+	public function mainCron(){
+		// TODO: implement the cron functions here
+	}
 
 
 }
