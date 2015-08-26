@@ -34,7 +34,9 @@
 			<p>{l s='Register to activate the Skebby SMS module.' mod='skebby'}</p>
 	
 			<div class="text-center mt50">
-				<a target="_blank" href="http://www.skebby.it/business/servizi-sms-di-massa/" id="B_1">{l s='SIGN UP AND ENABLE SMS NOTIFICATION' mod='skebby'}<br/>{l s='100 SMS FREE' mod='skebby'}</a>
+
+				<a target="_blank" href="http://www.skebby.it/business/servizi-sms-di-massa/?ac=3271487" id="B_1">{l s='SIGN UP AND ENABLE SMS NOTIFICATION' mod='skebby'}<br/>{l s='100 SMS FREE' mod='skebby'}</a>
+
 			</div>
 			
 		</div>
@@ -62,8 +64,9 @@
 		<div class="col-md-6 text-center">
 		
 			<img src="/modules/skebby/img/home-portatile.jpg"><br/>
-			
-			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/" id="A_1">{l s='WATCH THE DEMO SMS FROM WEB' mod='skebby'}</a>
+
+			<a target="_blank" href="http://www.skebby.it/business/index/demo-web/?ac=3271487" id="A_1">{l s='WATCH THE DEMO SMS FROM WEB' mod='skebby'}</a>
+
 		
 	
 		</div>
