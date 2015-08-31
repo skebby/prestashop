@@ -167,20 +167,20 @@ class Skebby extends Module
 			Configuration::updateValue('SKEBBY_DEFAULT_QUALITY', 'classic');
 
 			$suggested_order_template = '';
-			$suggested_order_template .= 'New order %order_reference%'."\n";
-			$suggested_order_template .= 'from  %civility% %first_name% %last_name% ,'."\n";
-			$suggested_order_template .= 'placed on  %order_date%'."\n";
-			$suggested_order_template .= 'for amount %order_price%'."\n";
-			$suggested_order_template .= 'has been placed.'."\n";
+			$suggested_order_template .= $this->l('New order %order_reference%')."\n";
+			$suggested_order_template .= $this->l('from  %civility% %first_name% %last_name% ,')."\n";
+			$suggested_order_template .= $this->l('placed on  %order_date%')."\n";
+			$suggested_order_template .= $this->l('for amount %order_price%')."\n";
+			$suggested_order_template .= $this->l('has been placed.')."\n";
 
 			Configuration::updateValue('SKEBBY_ORDER_TEMPLATE', $suggested_order_template);
 
 			$suggested_shipment_template = '';
-			$suggested_shipment_template .= 'Dear %civility% %first_name% %last_name%,'."\n";
-			$suggested_shipment_template .= 'your order  %order_reference%'."\n";
-			$suggested_shipment_template .= 'placed on  %order_date%'."\n";
-			$suggested_shipment_template .= 'for amount %order_price%'."\n";
-			$suggested_shipment_template .= 'has been shipped.'."\n";
+			$suggested_shipment_template .= $this->l('Dear %civility% %first_name% %last_name%,')."\n";
+			$suggested_shipment_template .= $this->l('your order  %order_reference%')."\n";
+			$suggested_shipment_template .= $this->l('placed on  %order_date%')."\n";
+			$suggested_shipment_template .= $this->l('for amount %order_price%')."\n";
+			$suggested_shipment_template .= $this->l('has been shipped.')."\n";
 
 			Configuration::updateValue('SKEBBY_SHIPMENTSTATUS_NOTIFICATION_TEMPLATE', $suggested_shipment_template);
 
